@@ -63,7 +63,7 @@ const BookAppointmentWrapper = () => {
 
     const content = (
         <div className="flex-1 flex flex-col h-screen relative overflow-y-auto w-full">
-            <div className="bg-[#1A2B48] px-6 py-12 sm:px-12 flex flex-col items-center justify-center text-center">
+            <div className="bg-[#1A2B48] px-6 pt-20 pb-12 sm:py-12 sm:px-12 flex flex-col items-center justify-center text-center shrink-0">
                 <h1 className="text-3xl sm:text-4xl font-heading font-black text-white mb-2">
                     Book Clinical Appointment
                 </h1>

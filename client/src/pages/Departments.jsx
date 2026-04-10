@@ -3,7 +3,7 @@
  */
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { DashboardLayout } from '@/components/layout';
+import { LandingLayout } from '@/components/layout';
 import { getDepartments } from '@/services/departments';
 import { Card, Button, Spinner, Alert } from '@/components/ui';
 import { cn } from '@/lib/utils';
@@ -71,7 +71,7 @@ const Departments = () => {
     }, []);
 
     return (
-        <DashboardLayout>
+        <LandingLayout>
             <div className="container-app py-12">
                 <div className="text-center mb-12 animate-slide-up">
                     <h1 className="text-4xl font-bold text-gray-900 mb-4">
@@ -125,7 +125,7 @@ const Departments = () => {
                     </div>
                 )}
             </div>
-        </DashboardLayout>
+        </LandingLayout>
     );
 };
 

@@ -14,7 +14,7 @@ const emailService = require('../services/email/emailService');
  */
 const createAppointment = asyncHandler(async (req, res) => {
     const patientId = req.user.id;
-    const { doctor_id, department_id, start_time, end_time, reason, notes } = req.body;
+    const { doctor_id, department_id, start_time, end_time, reason, notes, severity, is_emergency } = req.body;
 
     // Verify doctor exists and is active
     const { data: doctor, error: doctorError } = await supabaseAdmin
@@ -48,7 +48,7 @@ const createAppointment = asyncHandler(async (req, res) => {
         throw ApiError.notFound('Patient not found');
     }
 
-    // Create appointment
+    // Create appointment (with optional triage severity tracking)
     const { data, error } = await supabaseAdmin
         .from('appointments')
         .insert([{
@@ -60,6 +60,8 @@ const createAppointment = asyncHandler(async (req, res) => {
             reason,
             notes,
             status: 'pending',
+            ...(severity && { severity }),
+            ...(is_emergency !== undefined && { is_emergency }),
         }])
         .select(`
             *,

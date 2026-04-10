@@ -16,7 +16,10 @@ import {
   Settings,
   LogOut,
   ShieldCheck,
+  Menu,
+  X
 } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 const navItems = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -31,16 +34,66 @@ const navItems = [
 const PatientSidebar = () => {
   const { pathname } = useLocation();
   const { signOut } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Close sidebar on navigation change
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname]);
+
+  // Prevent background scroll when mobile sidebar is open
+  useEffect(() => {
+    if (sidebarOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    }
+  }, [sidebarOpen]);
 
   return (
-    <aside className="hidden lg:flex flex-col w-64 bg-[#1A2B48] text-white p-6 gap-8 shrink-0">
-      {/* Logo */}
-      <Link to="/" className="flex items-center gap-3">
-        <div className="w-10 h-10 bg-[#008080] rounded-xl flex items-center justify-center shadow-lg shadow-[#008080]/20">
-          <Activity className="w-5 h-5 text-white" />
+    <>
+      {/* Mobile Hamburger Toggle (Floating) */}
+      <button 
+        onClick={() => setSidebarOpen(true)}
+        className="lg:hidden fixed top-3 left-4 z-40 p-2 bg-white rounded-lg shadow-sm border border-slate-200 text-[#1A2B48] flex items-center justify-center hover:bg-slate-50 transition-colors"
+        aria-label="Open navigation menu"
+      >
+        <Menu className="w-5 h-5" />
+      </button>
+
+      {/* Mobile Overlay */}
+      {sidebarOpen && (
+        <div 
+          className="lg:hidden fixed inset-0 z-40 bg-[#0B1120]/50 backdrop-blur-sm transition-opacity"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside className={`
+        fixed lg:static inset-y-0 left-0 z-50
+        flex flex-col w-64 bg-[#1A2B48] text-white p-6 gap-8 shrink-0 h-screen overflow-y-auto
+        transform transition-transform duration-300 ease-in-out shadow-2xl lg:shadow-none
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+      `}>
+        {/* Logo and Mobile Close */}
+        <div className="flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-[#008080] rounded-xl flex items-center justify-center shadow-lg shadow-[#008080]/20">
+              <Activity className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-xl font-heading font-bold tracking-tight text-white">Niramaya.io</span>
+          </Link>
+          <button 
+            onClick={() => setSidebarOpen(false)}
+            className="lg:hidden p-2 text-white/50 hover:text-white rounded-lg bg-white/5"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
-        <span className="text-xl font-heading font-bold tracking-tight text-white">Niramaya.io</span>
-      </Link>
 
       {/* Navigation */}
       <nav className="flex flex-col gap-2">
@@ -84,6 +137,7 @@ const PatientSidebar = () => {
         </div>
       </div>
     </aside>
+    </>
   );
 };
 

@@ -1,17 +1,23 @@
 /**
- * SymptomTriage — AI-Powered Symptom Analysis
+ * SymptomTriage — AI-Powered Symptom Analysis with SOS Emergency System
+ * 
+ * Dual-mode triage:
+ * - Standard: BioBERT NLP symptom analysis → department routing
+ * - Emergency SOS: GPS acquisition → nearest doctor → instant booking
  */
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PatientSidebar from '@/components/layout/PatientSidebar';
+import SOSModal from '@/components/emergency/SOSModal';
 import { useNiramaya } from '@/hooks/useNiramaya';
-import { Activity, Brain, AlertTriangle, Mic, Lock, ArrowRight } from 'lucide-react';
+import { Activity, Brain, AlertTriangle, Mic, Lock, ArrowRight, Radio, Shield } from 'lucide-react';
 
 const SymptomTriage = () => {
   const [input, setInput] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [showSOS, setShowSOS] = useState(false);
   const navigate = useNavigate();
-  const { analyzeSymptoms } = useNiramaya();
+  const { analyzeSymptoms, riskScore } = useNiramaya();
 
   const handleAnalyze = async () => {
     if (input.length < 10) return;
@@ -19,14 +25,24 @@ const SymptomTriage = () => {
     await new Promise((r) => setTimeout(r, 1500));
     const result = analyzeSymptoms(input);
     setIsAnalyzing(false);
-    navigate('/triage-results', { state: { result } });
+
+    // If high severity detected, auto-prompt SOS
+    if (result.severity === 'high') {
+      setShowSOS(true);
+    } else {
+      navigate('/triage-results', { state: { result } });
+    }
+  };
+
+  const handleSOSTrigger = () => {
+    setShowSOS(true);
   };
 
   return (
     <div className="h-screen w-full bg-slate-50 flex flex-row overflow-hidden relative">
       <PatientSidebar />
       <main className="flex-1 flex flex-col h-screen overflow-y-auto relative">
-        <header className="bg-white border-b border-slate-200 px-8 py-6 flex items-center justify-between">
+        <header className="bg-white border-b border-slate-200 px-8 pt-16 pb-6 sm:py-6 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 bg-[#008080]/10 rounded-xl flex items-center justify-center">
               <Brain className="w-5 h-5 text-[#008080]" />
@@ -36,12 +52,29 @@ const SymptomTriage = () => {
               <p className="text-xs text-slate-500">BioBERT Clinical NLP Engine v4.2</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#008080] opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#008080]" />
-            </span>
-            <span className="text-xs font-bold text-[#008080]">AI Online</span>
+          <div className="flex items-center gap-4">
+            {/* Risk Score Badge */}
+            {riskScore > 0 && (
+              <div className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg border ${
+                riskScore >= 75
+                  ? 'bg-red-50 border-red-200 text-red-600'
+                  : riskScore >= 45
+                    ? 'bg-amber-50 border-amber-200 text-amber-600'
+                    : 'bg-green-50 border-green-200 text-green-600'
+              }`}>
+                <Activity className="w-3.5 h-3.5" />
+                <span className="text-[10px] font-black uppercase tracking-wider">
+                  Risk: {riskScore}%
+                </span>
+              </div>
+            )}
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#008080] opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#008080]" />
+              </span>
+              <span className="text-xs font-bold text-[#008080]">AI Online</span>
+            </div>
           </div>
         </header>
 
@@ -84,9 +117,21 @@ const SymptomTriage = () => {
             </div>
           </div>
 
-          <button className="mt-8 px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-heading font-black rounded-2xl shadow-[0_4px_12px_rgba(231,29,54,0.3)] transition-all flex items-center gap-3">
-            <AlertTriangle className="w-5 h-5" /> Emergency SOS — Trigger Alert Now
+          {/* SOS Emergency Button — Now fully functional */}
+          <button
+            onClick={handleSOSTrigger}
+            className="mt-8 px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-heading font-black rounded-2xl shadow-[0_4px_12px_rgba(231,29,54,0.3)] hover:shadow-[0_8px_24px_rgba(231,29,54,0.5)] transition-all flex items-center gap-3 group relative overflow-hidden"
+          >
+            {/* Pulse ring animation */}
+            <span className="absolute inset-0 rounded-2xl border-2 border-red-400/50 animate-ping opacity-30" />
+            <Radio className="w-5 h-5 group-hover:animate-pulse" />
+            Emergency SOS — Trigger Alert Now
+            <AlertTriangle className="w-5 h-5" />
           </button>
+          <p className="mt-3 text-[10px] text-slate-400 flex items-center gap-1">
+            <Shield className="w-3 h-3 text-red-400" />
+            SOS uses GPS to find the nearest available doctor instantly
+          </p>
         </div>
 
         <footer className="p-4 bg-white border-t border-slate-200">
@@ -98,6 +143,9 @@ const SymptomTriage = () => {
           </div>
         </footer>
       </main>
+
+      {/* SOS Emergency Modal */}
+      <SOSModal isOpen={showSOS} onClose={() => setShowSOS(false)} />
     </div>
   );
 };

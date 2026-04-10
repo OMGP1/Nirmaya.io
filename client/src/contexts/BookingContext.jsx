@@ -26,6 +26,9 @@ const initialState = {
         timeSlot: null,   // ISO 8601 string
         reason: '',
         notes: '',
+        isEmergency: false,
+        severity: 'low',
+        patientLocation: null,
     },
     error: null,
     isSubmitting: false,
@@ -101,6 +104,17 @@ function bookingReducer(state, action) {
         case 'RESET':
             return initialState;
 
+        case 'SET_EMERGENCY':
+            return {
+                ...state,
+                selection: {
+                    ...state.selection,
+                    isEmergency: action.payload.isEmergency,
+                    severity: action.payload.severity || 'high',
+                    patientLocation: action.payload.patientLocation || null,
+                },
+            };
+
         default:
             return state;
     }
@@ -140,6 +154,13 @@ export const BookingProvider = ({ children }) => {
 
     const reset = useCallback(() => dispatch({ type: 'RESET' }), []);
 
+    const setEmergency = useCallback((isEmergency, severity, patientLocation) => {
+        dispatch({
+            type: 'SET_EMERGENCY',
+            payload: { isEmergency, severity, patientLocation },
+        });
+    }, []);
+
     // Computed values
     const canProceed = {
         [BOOKING_STEPS.DEPARTMENT]: !!state.selection.department,
@@ -165,6 +186,7 @@ export const BookingProvider = ({ children }) => {
         setError,
         setSubmitting,
         reset,
+        setEmergency,
     };
 
     return (

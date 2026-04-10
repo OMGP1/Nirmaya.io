@@ -15,8 +15,9 @@ import { supabase } from '@/lib/supabase';
 import { Spinner } from '@/components/ui';
 import {
     AlertCircle, Heart, Droplets, Activity, Clock,
-    Users, ChevronRight, Zap, ArrowRight, Shield,
+    Users, ChevronRight, Zap, ArrowRight, Shield, Radio,
 } from 'lucide-react';
+import EmergencyQueue from '@/components/doctor/EmergencyQueue';
 
 const DoctorDashboard = () => {
     const { user, profile } = useAuth();
@@ -24,6 +25,7 @@ const DoctorDashboard = () => {
     const [summary, setSummary] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [doctorRecordId, setDoctorRecordId] = useState(null);
 
     useEffect(() => {
         const fetchDashboardData = async () => {
@@ -37,6 +39,8 @@ const DoctorDashboard = () => {
                     .maybeSingle();
 
                 if (doctorError || !doctor) throw new Error('Doctor profile not found. Please contact admin to set up your doctor profile.');
+
+                setDoctorRecordId(doctor.id);
 
                 const today = new Date();
                 const todayStart = startOfDay(today).toISOString();
@@ -108,6 +112,11 @@ const DoctorDashboard = () => {
 
     return (
         <div className="space-y-6 max-w-[1600px] mx-auto">
+            {/* Emergency Queue — Realtime SOS alerts */}
+            {doctorRecordId && (
+                <EmergencyQueue doctorId={doctorRecordId} />
+            )}
+
             {/* Command Center Header */}
             <div className="flex items-center justify-between">
                 <div>
@@ -205,7 +214,7 @@ const DoctorDashboard = () => {
                                     const isUrgent = apt.status === 'pending';
                                     const riskVal = riskScore || 0;
                                     return (
-                                        <tr key={apt.id} className={`group transition-all relative ${isUrgent ? 'bg-red-50/30' : 'hover:bg-slate-50'}`}>
+                                        <tr key={apt.id} className={`group transition-all relative ${isUrgent ? 'bg-red-50/30' : apt.is_emergency ? 'bg-red-50/20 shadow-[inset_0_0_20px_rgba(239,68,68,0.05)]' : 'hover:bg-slate-50'}`}>
                                             <td className={`px-5 py-4 ${isUrgent ? 'border-l-4 border-[#ef4444]' : 'border-l-4 border-transparent'}`}>
                                                 <div className="flex items-center gap-3">
                                                     <div className="relative shrink-0">

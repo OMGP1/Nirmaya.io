@@ -62,7 +62,7 @@ const Doctors = () => {
     const content = (
         <div className="flex-1 flex flex-col h-screen relative overflow-y-auto">
             {/* Header / Banner */}
-            <div className="bg-white border-b border-slate-200 px-6 py-8 sm:px-12 flex flex-col space-y-2">
+            <div className={`bg-white border-b border-slate-200 px-6 py-8 sm:px-12 flex flex-col space-y-2 ${showSidebar ? 'pt-20 lg:pt-8' : ''}`}>
                 <div className="flex items-center gap-3 mb-2">
                     <div className="w-10 h-10 bg-[#008080]/10 rounded-xl flex items-center justify-center">
                         <User className="w-5 h-5 text-[#008080]" />

@@ -19,6 +19,7 @@ const doctorRoutes = require('./routes/doctorRoutes');
 const doctorPortalRoutes = require('./routes/doctorPortalRoutes');
 const departmentRoutes = require('./routes/departmentRoutes');
 const chatbotRoutes = require('./routes/chatbot');
+const emergencyRoutes = require('./routes/emergencyRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -95,6 +96,7 @@ app.use('/api/doctors', doctorRoutes);
 app.use('/api/doctor', doctorPortalRoutes); // Doctor portal (authenticated)
 app.use('/api/departments', departmentRoutes);
 app.use('/api/chatbot', chatbotRoutes); // AI Chatbot
+app.use('/api/emergency', emergencyRoutes); // SOS & Triage
 
 // 404 handler
 app.use((req, res) => {

@@ -1,9 +1,14 @@
 /**
- * TriageResults — AI Triage Analysis Results
+ * TriageResults — AI Triage Analysis Results with Severity-Aware Routing
+ * 
+ * Low/Moderate severity → Standard specialist booking
+ * High severity → Auto-prompt SOS modal for proximity-based doctor assignment
  */
+import { useState } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import PatientSidebar from '@/components/layout/PatientSidebar';
-import { Brain, ArrowLeft, CheckCircle, User, Calendar } from 'lucide-react';
+import SOSModal from '@/components/emergency/SOSModal';
+import { Brain, ArrowLeft, CheckCircle, User, Calendar, AlertTriangle, Radio, Shield } from 'lucide-react';
 
 const specialistMap = {
   cardiology: { title: 'Cardiology', icon: '🫀', description: 'Heart and cardiovascular system specialists' },
@@ -14,10 +19,17 @@ const specialistMap = {
   general: { title: 'General Medicine', icon: '🩺', description: 'Primary care and general consultation' },
 };
 
+const severityConfig = {
+  low: { label: 'Low', color: 'bg-green-100 text-green-700 border-green-200', dotColor: 'bg-green-500' },
+  moderate: { label: 'Moderate', color: 'bg-amber-100 text-amber-700 border-amber-200', dotColor: 'bg-amber-500' },
+  high: { label: 'High', color: 'bg-red-100 text-red-700 border-red-200', dotColor: 'bg-red-500' },
+};
+
 const TriageResults = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const result = location.state?.result;
+  const [showSOS, setShowSOS] = useState(false);
 
   if (!result) {
     return (
@@ -34,12 +46,14 @@ const TriageResults = () => {
 
   const spec = specialistMap[result.department] || specialistMap.general;
   const confPercent = Math.round(result.confidence * 100);
+  const severity = severityConfig[result.severity] || severityConfig.low;
+  const isHighSeverity = result.severity === 'high';
 
   return (
     <div className="h-screen w-full bg-slate-50 flex flex-row overflow-hidden relative">
       <PatientSidebar />
       <main className="flex-1 flex flex-col h-screen overflow-y-auto relative">
-        <header className="bg-white border-b border-slate-200 px-8 py-6 flex items-center gap-4">
+        <header className="bg-white border-b border-slate-200 px-8 pt-16 pb-6 sm:py-6 flex items-center gap-4 shrink-0">
           <button onClick={() => navigate(-1)} className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center hover:bg-slate-200 transition-colors">
             <ArrowLeft className="w-5 h-5 text-slate-600" />
           </button>
@@ -50,13 +64,37 @@ const TriageResults = () => {
         </header>
 
         <div className="flex-1 p-8 max-w-3xl mx-auto w-full space-y-8">
+          {/* High Severity Alert Banner */}
+          {isHighSeverity && (
+            <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-5 flex items-center justify-between animate-pulse">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center">
+                  <AlertTriangle className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="font-heading font-black text-red-700 text-sm">High Severity Detected</p>
+                  <p className="text-xs text-red-500">We recommend using SOS to find the nearest available doctor</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowSOS(true)}
+                className="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-heading font-bold text-sm rounded-xl shadow-[0_4px_12px_rgba(239,68,68,0.3)] transition-all flex items-center gap-2"
+              >
+                <Radio className="w-4 h-4" />
+                Activate SOS
+              </button>
+            </div>
+          )}
+
           {/* Result Card */}
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 space-y-6">
-            <div className="flex items-center gap-4">
-              <div className="text-4xl">{spec.icon}</div>
-              <div>
-                <h2 className="text-2xl font-heading font-black text-[#1A2B48]">{spec.title}</h2>
-                <p className="text-sm text-slate-500">{spec.description}</p>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="text-4xl">{spec.icon}</div>
+                <div>
+                  <h2 className="text-2xl font-heading font-black text-[#1A2B48]">{spec.title}</h2>
+                  <p className="text-sm text-slate-500">{spec.description}</p>
+                </div>
               </div>
             </div>
 
@@ -65,9 +103,12 @@ const TriageResults = () => {
                 <p className="text-2xl font-heading font-black text-[#008080]">{confPercent}%</p>
                 <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-1">Confidence</p>
               </div>
-              <div className="bg-slate-50 rounded-xl p-4 text-center">
-                <p className="text-2xl font-heading font-black text-[#1A2B48] capitalize">{result.severity}</p>
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-1">Severity</p>
+              <div className={`rounded-xl p-4 text-center border ${severity.color}`}>
+                <div className="flex items-center justify-center gap-2">
+                  <span className={`w-2 h-2 rounded-full ${severity.dotColor} ${isHighSeverity ? 'animate-pulse' : ''}`} />
+                  <p className="text-2xl font-heading font-black capitalize">{result.severity}</p>
+                </div>
+                <p className="text-xs font-bold uppercase tracking-wider mt-1 opacity-70">Severity</p>
               </div>
               <div className="bg-slate-50 rounded-xl p-4 text-center">
                 <div className="flex items-center justify-center gap-1">
@@ -84,19 +125,55 @@ const TriageResults = () => {
             </div>
           </div>
 
-          {/* Actions */}
+          {/* Actions — severity-aware routing */}
           <div className="grid sm:grid-cols-2 gap-4">
-            <Link to="/book" className="bg-[#008080] text-white p-5 rounded-2xl shadow-[0_4px_12px_rgba(0,128,128,0.3)] flex items-center justify-center gap-3 font-heading font-bold hover:brightness-110 transition-all">
-              <Calendar className="w-5 h-5" />
-              Book {spec.title} Specialist
-            </Link>
-            <Link to="/doctors" className="bg-white border border-slate-200 text-[#1A2B48] p-5 rounded-2xl shadow-sm flex items-center justify-center gap-3 font-heading font-bold hover:bg-slate-50 transition-all">
-              <User className="w-5 h-5" />
-              Browse All Specialists
-            </Link>
+            {isHighSeverity ? (
+              <>
+                {/* High severity: SOS is primary action */}
+                <button
+                  onClick={() => setShowSOS(true)}
+                  className="bg-red-600 hover:bg-red-700 text-white p-5 rounded-2xl shadow-[0_4px_12px_rgba(239,68,68,0.3)] flex items-center justify-center gap-3 font-heading font-bold transition-all"
+                >
+                  <Radio className="w-5 h-5" />
+                  🚨 SOS — Find Nearest Doctor
+                </button>
+                <Link to="/book" className="bg-white border border-slate-200 text-[#1A2B48] p-5 rounded-2xl shadow-sm flex items-center justify-center gap-3 font-heading font-bold hover:bg-slate-50 transition-all">
+                  <Calendar className="w-5 h-5" />
+                  Schedule Regular Appointment
+                </Link>
+              </>
+            ) : (
+              <>
+                {/* Low/Moderate severity: Standard booking is primary */}
+                <Link to="/book" className="bg-[#008080] text-white p-5 rounded-2xl shadow-[0_4px_12px_rgba(0,128,128,0.3)] flex items-center justify-center gap-3 font-heading font-bold hover:brightness-110 transition-all">
+                  <Calendar className="w-5 h-5" />
+                  Book {spec.title} Specialist
+                </Link>
+                <Link to="/doctors" className="bg-white border border-slate-200 text-[#1A2B48] p-5 rounded-2xl shadow-sm flex items-center justify-center gap-3 font-heading font-bold hover:bg-slate-50 transition-all">
+                  <User className="w-5 h-5" />
+                  Browse All Specialists
+                </Link>
+              </>
+            )}
           </div>
+
+          {/* SOS option always visible for low/moderate too */}
+          {!isHighSeverity && (
+            <div className="text-center">
+              <button
+                onClick={() => setShowSOS(true)}
+                className="text-sm text-red-500 hover:text-red-600 font-bold flex items-center gap-2 mx-auto transition-colors"
+              >
+                <AlertTriangle className="w-4 h-4" />
+                Need immediate help? Trigger Emergency SOS
+              </button>
+            </div>
+          )}
         </div>
       </main>
+
+      {/* SOS Emergency Modal */}
+      <SOSModal isOpen={showSOS} onClose={() => setShowSOS(false)} />
     </div>
   );
 };

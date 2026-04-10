@@ -138,6 +138,44 @@ function analyzeSymptoms(text) {
   return result;
 }
 
+/* ===== SOS Utilities ===== */
+function isSOSRequired(riskScore) {
+  return riskScore >= NIRAMAYA_CONFIG.sosThreshold;
+}
+
+function getTriageTier(severity) {
+  const tiers = {
+    low: {
+      label: 'Routine Care',
+      color: '#22C55E',
+      bgColor: '#22C55E10',
+      borderColor: '#22C55E30',
+      icon: '🟢',
+      routing: 'symptom-based',
+      description: 'Standard specialist matching based on symptoms',
+    },
+    moderate: {
+      label: 'Specialist Consult',
+      color: '#F59E0B',
+      bgColor: '#F59E0B10',
+      borderColor: '#F59E0B30',
+      icon: '🟡',
+      routing: 'symptom-based',
+      description: 'Priority specialist matching with elevated attention',
+    },
+    high: {
+      label: 'Immediate / SOS',
+      color: '#EF4444',
+      bgColor: '#EF444410',
+      borderColor: '#EF444430',
+      icon: '🔴',
+      routing: 'proximity-based',
+      description: 'GPS-based nearest doctor assignment for emergencies',
+    },
+  };
+  return tiers[severity] || tiers.low;
+}
+
 /* ===== localStorage Sync ===== */
 function broadcastVitals(vitals, riskScore) {
   localStorage.setItem(NIRAMAYA_CONFIG.keys.vitals, JSON.stringify(vitals));
@@ -226,6 +264,8 @@ const NiramayaEngine = {
   getRiskColor,
   getRiskHex,
   analyzeSymptoms,
+  isSOSRequired,
+  getTriageTier,
   broadcastVitals,
   getStoredVitals,
   getStoredRiskScore,
@@ -246,6 +286,8 @@ export {
   getRiskColor,
   getRiskHex,
   analyzeSymptoms,
+  isSOSRequired,
+  getTriageTier,
   broadcastVitals,
   getStoredVitals,
   getStoredRiskScore,

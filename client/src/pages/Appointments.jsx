@@ -69,7 +69,7 @@ const Appointments = () => {
             
             <main className="flex-1 flex flex-col h-screen overflow-y-auto relative w-full">
                 {/* Header / Banner */}
-                <div className="bg-white border-b border-slate-200 px-6 py-8 sm:px-12 flex flex-col space-y-4 sm:flex-row sm:items-end justify-between">
+                <div className="bg-white border-b border-slate-200 px-6 pt-16 pb-8 sm:py-8 sm:px-12 flex flex-col space-y-4 sm:flex-row sm:items-end justify-between shrink-0">
                     <div>
                         <div className="flex items-center gap-3 mb-2">
                             <div className="w-10 h-10 bg-[#008080]/10 rounded-xl flex items-center justify-center">

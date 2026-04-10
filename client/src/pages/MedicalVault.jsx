@@ -18,7 +18,7 @@ const MedicalVault = () => {
     <div className="h-screen w-full bg-slate-50 flex flex-row overflow-hidden relative">
       <PatientSidebar />
       <main className="flex-1 flex flex-col h-screen overflow-y-auto relative">
-        <header className="bg-white border-b border-slate-200 px-8 py-6 flex items-center justify-between">
+        <header className="bg-white border-b border-slate-200 px-8 pt-16 pb-6 sm:py-6 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 bg-[#008080]/10 rounded-xl flex items-center justify-center">
               <ShieldCheck className="w-5 h-5 text-[#008080]" />
