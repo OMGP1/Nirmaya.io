@@ -23,7 +23,7 @@ const stepLabels = [
 
 const ProgressIndicator = ({ currentStep }) => {
     return (
-        <div className="mb-8">
+        <div className="mb-10 sm:mb-12">
             <div className="flex items-center justify-between">
                 {stepLabels.map(({ step, label }, index) => {
                     const isCompleted = currentStep > step;
@@ -31,27 +31,27 @@ const ProgressIndicator = ({ currentStep }) => {
                     const isLast = index === stepLabels.length - 1;
 
                     return (
-                        <div key={step} className="flex items-center flex-1">
+                        <div key={step} className={cn("flex items-center", !isLast ? "flex-1" : "")}>
                             {/* Step Circle */}
-                            <div className="flex flex-col items-center">
+                            <div className="flex flex-col items-center relative z-10 w-8 sm:w-10 flex-shrink-0">
                                 <div
                                     className={cn(
-                                        'w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all shadow-sm z-10 relative mt-2',
-                                        isCompleted && 'bg-[#008080] text-white',
-                                        isCurrent && 'bg-[#1A2B48] text-white shadow-[#1A2B48]/30',
-                                        !isCompleted && !isCurrent && 'bg-slate-100 text-slate-400 border border-slate-200'
+                                        'w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm transition-all shadow-sm',
+                                        isCompleted && 'bg-[#0D9488] text-white',
+                                        isCurrent && 'bg-[#0B1120] text-white ring-4 ring-[#0B1120]/10',
+                                        !isCompleted && !isCurrent && 'bg-slate-50 text-slate-400 border border-slate-200'
                                     )}
                                 >
                                     {isCompleted ? (
-                                        <Check className="w-5 h-5" />
+                                        <Check className="w-4 h-4 sm:w-5 sm:h-5" />
                                     ) : (
                                         step
                                     )}
                                 </div>
                                 <span
                                     className={cn(
-                                        'text-[10px] sm:text-xs mt-3 block tracking-wide text-center',
-                                        (isCompleted) ? 'text-[#008080] font-bold' : isCurrent ? 'text-[#1A2B48] font-black' : 'text-slate-400 font-medium'
+                                        'absolute top-10 sm:top-12 text-[10px] sm:text-xs font-semibold tracking-wide text-center w-20 sm:w-24',
+                                        isCompleted ? 'text-[#0D9488]' : isCurrent ? 'text-[#0B1120]' : 'text-slate-400'
                                     )}
                                 >
                                     {label}
@@ -60,11 +60,11 @@ const ProgressIndicator = ({ currentStep }) => {
 
                             {/* Connector Line */}
                             {!isLast && (
-                                <div className="flex-1 px-1 sm:px-2 relative -mt-8 sm:-mt-5">
+                                <div className="flex-1 px-1 sm:px-2">
                                     <div
                                         className={cn(
                                             'h-1 rounded-full w-full',
-                                            isCompleted ? 'bg-[#008080]/50' : 'bg-slate-100'
+                                            isCompleted ? 'bg-[#0D9488]' : 'bg-slate-200'
                                         )}
                                     />
                                 </div>

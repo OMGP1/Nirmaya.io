@@ -23,7 +23,8 @@ const Avatar = ({
     // Generate initials from name
     const getInitials = (name) => {
         if (!name) return '?';
-        const parts = name.trim().split(' ');
+        const cleanName = name.replace(/^Dr\.?\s+/i, '');
+        const parts = cleanName.trim().split(' ');
         if (parts.length >= 2) {
             return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
         }
@@ -34,12 +35,12 @@ const Avatar = ({
     const getColor = (name) => {
         if (!name) return 'bg-gray-400';
         const colors = [
-            'bg-primary-500',
-            'bg-secondary-500',
-            'bg-purple-500',
-            'bg-pink-500',
-            'bg-orange-500',
-            'bg-cyan-500',
+            'bg-[#0D9488]', // niramaya-teal
+            'bg-[#008080]', // dark teal
+            'bg-[#1A2B48]', // niramaya-navy
+            'bg-[#0B1120]', // deep navy
+            'bg-teal-700',
+            'bg-slate-800',
         ];
         const index = name.charCodeAt(0) % colors.length;
         return colors[index];
