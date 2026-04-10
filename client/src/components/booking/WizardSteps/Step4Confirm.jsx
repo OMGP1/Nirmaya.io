@@ -59,20 +59,20 @@ const Step4Confirm = () => {
     return (
         <div>
             {/* Header with Navigation */}
-            <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div className="flex items-center gap-4 order-2 sm:order-1">
                     <Button
                         variant="outline"
                         size="sm"
                         onClick={prevStep}
-                        className="gap-2"
+                        className="gap-2 w-full sm:w-auto"
                     >
                         <ArrowLeft className="w-4 h-4" />
                         Back to Date & Time
                     </Button>
                 </div>
-                <div className="text-right">
-                    <h2 className="text-2xl font-bold text-gray-900">
+                <div className="text-left sm:text-right order-1 sm:order-2">
+                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
                         Confirm Appointment
                     </h2>
                     <p className="text-gray-600">

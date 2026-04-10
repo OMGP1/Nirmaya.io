@@ -70,18 +70,20 @@ const Step2Doctor = () => {
     return (
         <div>
             {/* Header with Navigation */}
-            <div className="flex items-center justify-between mb-6">
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={prevStep}
-                    className="gap-2"
-                >
-                    <ArrowLeft className="w-4 h-4" />
-                    Back to Department
-                </Button>
-                <div className="text-right">
-                    <h2 className="text-2xl font-bold text-gray-900">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div className="order-2 sm:order-1">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={prevStep}
+                        className="gap-2 w-full sm:w-auto"
+                    >
+                        <ArrowLeft className="w-4 h-4" />
+                        Back to Department
+                    </Button>
+                </div>
+                <div className="text-left sm:text-right order-1 sm:order-2">
+                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
                         Choose a Doctor
                     </h2>
                     <p className="text-gray-600">
@@ -120,13 +122,13 @@ const Step2Doctor = () => {
                                     isSelected && 'ring-2 ring-primary-500 bg-primary-50'
                                 )}
                             >
-                                <div className="flex items-center gap-4">
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                                     <Avatar
                                         name={doctor.user?.full_name}
                                         size="lg"
                                     />
 
-                                    <div className="flex-1 min-w-0">
+                                    <div className="flex-1 min-w-0 w-full">
                                         <div className="flex items-center gap-2">
                                             <h3 className="font-semibold text-gray-900">
                                                 Dr. {doctor.user?.full_name}
@@ -154,7 +156,7 @@ const Step2Doctor = () => {
                                         </div>
                                     </div>
 
-                                    <div className="text-right">
+                                    <div className="w-full sm:w-auto text-left sm:text-right mt-4 sm:mt-0 border-t sm:border-0 border-gray-100 pt-4 sm:pt-0 flex items-center justify-between sm:block">
                                         {doctor.consultation_fee && (
                                             <p className="font-semibold text-gray-900">
                                                 ₹{doctor.consultation_fee}
@@ -163,7 +165,7 @@ const Step2Doctor = () => {
                                         <Button
                                             size="sm"
                                             variant={isSelected ? 'primary' : 'outline'}
-                                            className="mt-2"
+                                            className="mt-0 sm:mt-2"
                                         >
                                             {isSelected ? 'Selected' : 'Select'}
                                         </Button>

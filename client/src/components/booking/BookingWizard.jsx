@@ -50,7 +50,7 @@ const ProgressIndicator = ({ currentStep }) => {
                                 </div>
                                 <span
                                     className={cn(
-                                        'text-xs mt-3 hidden sm:block tracking-wide',
+                                        'text-[10px] sm:text-xs mt-3 block tracking-wide text-center',
                                         (isCompleted) ? 'text-[#008080] font-bold' : isCurrent ? 'text-[#1A2B48] font-black' : 'text-slate-400 font-medium'
                                     )}
                                 >
@@ -60,7 +60,7 @@ const ProgressIndicator = ({ currentStep }) => {
 
                             {/* Connector Line */}
                             {!isLast && (
-                                <div className="flex-1 px-2 relative -mt-5">
+                                <div className="flex-1 px-1 sm:px-2 relative -mt-8 sm:-mt-5">
                                     <div
                                         className={cn(
                                             'h-1 rounded-full w-full',
@@ -105,7 +105,7 @@ const BookingWizard = () => {
             )}
 
             {/* Current Step */}
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 md:p-8">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 md:p-8">
                 {renderStep()}
             </div>
         </div>

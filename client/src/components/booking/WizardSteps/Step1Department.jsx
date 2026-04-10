@@ -80,7 +80,7 @@ const Step1Department = () => {
                 Choose the medical specialty you need for your consultation.
             </p>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {departments.map((dept) => {
                     const Icon = getIcon(dept.name);
                     const isSelected = selection.department?.id === dept.id;
