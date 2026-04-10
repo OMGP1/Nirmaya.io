@@ -17,8 +17,126 @@ import {
     ArrowLeft, User, Calendar, Clock, Mail, Phone,
     FileText, Check, X, Save, Heart, Droplets, Activity,
     AlertTriangle, ShieldAlert, Zap, Video, Download,
-    TrendingUp, TrendingDown, ArrowUpRight,
+    TrendingUp, TrendingDown, ArrowUpRight, Eye, File, Image,
 } from 'lucide-react';
+import { getPatientDocuments, getDocumentUrl } from '@/services/documents';
+
+// --- Patient Documents Sub-Panel (used inside AppointmentDetail) ---
+const PatientDocumentsPanel = ({ patientId, patientDocs, setPatientDocs, docsLoading, setDocsLoading, appointmentNotes, appointmentReason }) => {
+    useEffect(() => {
+        if (!patientId) return;
+        setDocsLoading(true);
+        getPatientDocuments(patientId)
+            .then(docs => setPatientDocs(docs))
+            .catch(err => console.error('Failed to fetch patient docs:', err))
+            .finally(() => setDocsLoading(false));
+    }, [patientId]);
+
+    const handleView = async (doc) => {
+        try {
+            const url = await getDocumentUrl(doc.file_path);
+            window.open(url, '_blank');
+        } catch { alert('Cannot open document'); }
+    };
+
+    const getTypeColor = (type) => {
+        const colors = {
+            prescription: 'bg-blue-50 text-blue-600 border-blue-200',
+            lab_report: 'bg-green-50 text-green-600 border-green-200',
+            imaging: 'bg-purple-50 text-purple-600 border-purple-200',
+            discharge_summary: 'bg-amber-50 text-amber-600 border-amber-200',
+            other: 'bg-slate-50 text-slate-600 border-slate-200',
+        };
+        return colors[type] || colors.other;
+    };
+
+    // Generate a structured AI Summary from metadata
+    const generateSummary = () => {
+        const lines = [];
+        if (appointmentReason) lines.push(`**Chief Complaint:** ${appointmentReason}`);
+        if (appointmentNotes) lines.push(`**Clinical Notes:** ${appointmentNotes}`);
+        if (patientDocs.length > 0) {
+            const rxCount = patientDocs.filter(d => d.document_type === 'prescription').length;
+            const labCount = patientDocs.filter(d => d.document_type === 'lab_report').length;
+            const imgCount = patientDocs.filter(d => d.document_type === 'imaging').length;
+            lines.push(`**Documents on File:** ${patientDocs.length} total (${rxCount} prescriptions, ${labCount} lab reports, ${imgCount} imaging)`);
+            const recent = patientDocs.slice(0, 3);
+            recent.forEach(d => {
+                lines.push(`• _${d.file_name}_ — ${d.description || d.document_type?.replace('_', ' ')} (${new Date(d.uploaded_at).toLocaleDateString()})`);
+            });
+        } else {
+            lines.push('_No documents uploaded by patient._');
+        }
+        return lines;
+    };
+
+    return (
+        <div className="space-y-4">
+            {/* AI Clinical Summary */}
+            <div className="bg-gradient-to-br from-[#0B1120] to-[#1a2744] rounded-[16px] border border-white/10 p-5 shadow-lg">
+                <div className="flex items-center gap-2 mb-3">
+                    <div className="p-1.5 bg-[#0D9488]/20 rounded-lg">
+                        <Zap className="w-3.5 h-3.5 text-[#0D9488]" />
+                    </div>
+                    <span className="text-[10px] font-black text-white/70 uppercase tracking-widest">AI Clinical Brief</span>
+                </div>
+                <div className="space-y-1.5">
+                    {generateSummary().map((line, i) => (
+                        <p key={i} className="text-xs text-white/80 leading-relaxed" dangerouslySetInnerHTML={{
+                            __html: line
+                                .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')
+                                .replace(/_(.*?)_/g, '<em class="text-[#0D9488]">$1</em>')
+                        }} />
+                    ))}
+                </div>
+            </div>
+
+            {/* Documents List */}
+            <div className="bg-white rounded-[16px] border border-slate-200 shadow-sm overflow-hidden">
+                <div className="px-5 py-3 border-b border-slate-100 flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-[#0D9488]" />
+                    <h3 className="text-[10px] font-black text-[#1F2937] uppercase tracking-widest">Patient Documents</h3>
+                    <span className="ml-auto px-2 py-0.5 bg-[#0D9488]/10 text-[#0D9488] text-[9px] font-black rounded uppercase border border-[#0D9488]/20">
+                        {patientDocs.length}
+                    </span>
+                </div>
+
+                {docsLoading ? (
+                    <div className="p-6 text-center text-xs text-slate-400">Loading documents...</div>
+                ) : patientDocs.length > 0 ? (
+                    <div className="divide-y divide-slate-50 max-h-60 overflow-y-auto">
+                        {patientDocs.map(doc => {
+                            const IconComp = doc.file_type?.includes('image') ? Image : doc.file_type?.includes('pdf') ? FileText : File;
+                            return (
+                                <div key={doc.id} className="flex items-center gap-3 px-5 py-3 hover:bg-slate-50 transition-colors">
+                                    <div className="w-8 h-8 rounded-lg bg-[#0D9488]/10 flex items-center justify-center shrink-0">
+                                        <IconComp className="w-4 h-4 text-[#0D9488]" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-xs font-bold text-[#1F2937] truncate">{doc.file_name}</p>
+                                        <div className="flex items-center gap-1.5 mt-0.5">
+                                            <span className={`px-1.5 py-0.5 text-[8px] font-black rounded uppercase border ${getTypeColor(doc.document_type)}`}>
+                                                {doc.document_type?.replace('_', ' ')}
+                                            </span>
+                                            <span className="text-[9px] text-slate-400">{new Date(doc.uploaded_at).toLocaleDateString()}</span>
+                                        </div>
+                                    </div>
+                                    <button onClick={() => handleView(doc)} className="p-1.5 hover:bg-[#0D9488]/10 rounded-lg transition-colors" title="View document">
+                                        <Eye className="w-3.5 h-3.5 text-[#0D9488]" />
+                                    </button>
+                                </div>
+                            );
+                        })}
+                    </div>
+                ) : (
+                    <div className="p-6 text-center text-xs text-slate-400">
+                        No documents uploaded by this patient
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
 
 const AppointmentDetail = () => {
     const { id } = useParams();
@@ -31,6 +149,8 @@ const AppointmentDetail = () => {
     const [notes, setNotes] = useState('');
     const [saving, setSaving] = useState(false);
     const [actionLoading, setActionLoading] = useState(false);
+    const [patientDocs, setPatientDocs] = useState([]);
+    const [docsLoading, setDocsLoading] = useState(false);
 
     useEffect(() => {
         const fetchAppointment = async () => {
@@ -272,6 +392,17 @@ const AppointmentDetail = () => {
                             <p className="text-sm text-[#1F2937] leading-relaxed">{appointment.reason}</p>
                         </div>
                     )}
+
+                    {/* Patient Documents */}
+                    <PatientDocumentsPanel
+                        patientId={appointment.patient?.id}
+                        patientDocs={patientDocs}
+                        setPatientDocs={setPatientDocs}
+                        docsLoading={docsLoading}
+                        setDocsLoading={setDocsLoading}
+                        appointmentNotes={appointment.notes}
+                        appointmentReason={appointment.reason}
+                    />
                 </div>
 
                 {/* Right Column: Analytics (8 cols) */}
