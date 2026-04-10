@@ -1,32 +1,75 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Poppins:wght@100..900&family=Fira+Code:wght@300..700&family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&family=JetBrains+Mono&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Shadcn CSS Variables */
+/* ===== NIRAMAYA.IO DESIGN SYSTEM ===== */
+
+/* --- Clinical Light Theme (Default — Dashboard/Portal) --- */
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 222 47% 11%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 213 50% 19%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 174 100% 25%;
+    --secondary-foreground: 0 0% 100%;
     --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 174 100% 25%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.5rem;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 174 100% 25%;
+    --radius: 0.75rem;
+
+    /* Niramaya Extended Tokens */
+    --tertiary: #008080;
+    --niramaya-navy: #0B1120;
+    --niramaya-navy-sidebar: #0F172A;
+    --niramaya-teal: #008080;
+    --niramaya-teal-light: #00d2c1;
+    --niramaya-teal-accent: #0D9488;
+    --niramaya-cyan: #00F5FF;
+    --clinical-stable: #00d2c1;
+    --clinical-anomaly: #ff9f1c;
+    --clinical-critical: #e71d36;
+  }
+
+  /* --- Dark Entrance Theme (Landing/Login/Register) --- */
+  .theme-entrance {
+    --background: 222 65% 8%;
+    --foreground: 210 40% 98%;
+    --card: 220 43% 11%;
+    --card-foreground: 210 40% 98%;
+    --primary: 184 100% 50%;
+    --primary-foreground: 222 65% 8%;
+    --secondary: 216 54% 11%;
+    --secondary-foreground: 210 40% 98%;
+    --border: 217 33% 17%;
+    --ring: 184 100% 50%;
+    --accent: 184 100% 50%;
+    --accent-foreground: 222 65% 8%;
+  }
+
+  /* --- Emergency Breach Theme (SOS Page) --- */
+  .theme-emergency {
+    --background: 0 60% 6%;
+    --foreground: 0 0% 100%;
+    --card: 0 84% 10%;
+    --card-foreground: 0 0% 100%;
+    --primary: 174 85% 30%;
+    --primary-foreground: 0 0% 100%;
+    --border: 0 84% 60%;
+    --accent: 0 84% 60%;
+    --accent-foreground: 0 0% 100%;
   }
 
   * {
@@ -59,7 +102,7 @@
   }
 }
 
-/* Component Layer */
+/* ===== COMPONENT LAYER ===== */
 @layer components {
 
   /* Focus ring */
@@ -85,14 +128,144 @@
   .bg-gradient-hero {
     @apply bg-gradient-to-br from-background via-muted/50 to-background;
   }
+
+  /* --- Niramaya Sidebar --- */
+  .niramaya-sidebar {
+    @apply flex flex-col bg-niramaya-navy text-white p-6 gap-8;
+  }
+
+  .niramaya-sidebar-link {
+    @apply flex items-center gap-3 p-3 rounded-xl font-medium text-white/70 hover:text-white hover:bg-white/5 transition-all;
+  }
+
+  .niramaya-sidebar-link.active {
+    @apply bg-white/10 font-bold text-white;
+  }
+
+  /* --- Niramaya Cards --- */
+  .niramaya-card {
+    @apply bg-white p-6 rounded-xl shadow-sm border border-slate-100;
+  }
+
+  .niramaya-card-dark {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    @apply border border-white/10 rounded-2xl;
+  }
+
+  /* --- Vitals Card --- */
+  .vital-card {
+    @apply bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between overflow-hidden;
+  }
+
+  .vital-label {
+    @apply text-xs font-bold text-primary uppercase tracking-wider;
+  }
+
+  .vital-value {
+    @apply text-3xl font-heading font-black text-primary;
+  }
+
+  .vital-unit {
+    @apply text-sm font-medium text-slate-400;
+  }
+
+  .vital-live-dot {
+    @apply relative flex h-2 w-2;
+  }
+
+  .vital-live-dot::before {
+    content: '';
+    @apply animate-ping absolute inline-flex h-full w-full rounded-full opacity-75;
+    background-color: var(--tertiary);
+  }
+
+  .vital-live-dot::after {
+    content: '';
+    @apply relative inline-flex rounded-full h-2 w-2;
+    background-color: var(--tertiary);
+  }
+
+  /* --- Terminal Readout --- */
+  .terminal-readout {
+    @apply bg-black/40 rounded-xl p-4 border border-white/5 font-code text-[10px] flex flex-col gap-1.5;
+  }
+
+  .terminal-line {
+    @apply flex items-center gap-2;
+  }
+
+  .terminal-key {
+    @apply tracking-tighter;
+    color: var(--niramaya-teal);
+  }
+
+  .terminal-value {
+    @apply text-white/80;
+  }
+
+  /* --- Badge Styles --- */
+  .badge-clinical {
+    @apply px-3 py-1 text-[10px] font-black rounded-full uppercase tracking-widest border;
+  }
+
+  .badge-stable {
+    @apply badge-clinical;
+    background: rgba(0, 210, 193, 0.1);
+    color: var(--clinical-stable);
+    border-color: rgba(0, 210, 193, 0.2);
+  }
+
+  .badge-anomaly {
+    @apply badge-clinical;
+    background: rgba(255, 159, 28, 0.1);
+    color: var(--clinical-anomaly);
+    border-color: rgba(255, 159, 28, 0.2);
+  }
+
+  .badge-critical {
+    @apply badge-clinical;
+    background: rgba(231, 29, 54, 0.1);
+    color: var(--clinical-critical);
+    border-color: rgba(231, 29, 54, 0.2);
+  }
+
+  /* --- Glassmorphism --- */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    @apply border border-white/10 rounded-2xl;
+  }
+
+  /* --- Risk Gauge --- */
+  .risk-gauge-container {
+    @apply relative flex items-center justify-center;
+  }
+
+  /* --- FHIR Code Vault --- */
+  .fhir-code-editor {
+    background: #0F172A;
+    color: #e2e8f0;
+    font-family: var(--font-code, 'JetBrains Mono', monospace);
+    @apply text-sm p-5 rounded-lg border border-slate-700 overflow-y-auto leading-relaxed;
+  }
+
+  .json-key { color: #7dd3fc; }
+  .json-value { color: #6ee7b7; }
+  .json-string { color: #fcd34d; }
 }
 
-/* Utility Layer */
+/* ===== UTILITY LAYER ===== */
 @layer utilities {
 
   /* Text gradient */
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70;
+  }
+
+  .text-gradient-cyan {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(to right, #00F5FF, #008080);
   }
 
   /* Hide scrollbar */
@@ -116,82 +289,29 @@
   }
 }
 
-/* Theme Colors */
+/* ===== THEME COLOR MAPPINGS ===== */
 @layer base {
-  .bg-background {
-    background-color: hsl(var(--background));
-  }
-
-  .text-foreground {
-    color: hsl(var(--foreground));
-  }
-
-  .bg-card {
-    background-color: hsl(var(--card));
-  }
-
-  .text-card-foreground {
-    color: hsl(var(--card-foreground));
-  }
-
-  .bg-primary {
-    background-color: hsl(var(--primary));
-  }
-
-  .text-primary {
-    color: hsl(var(--primary));
-  }
-
-  .text-primary-foreground {
-    color: hsl(var(--primary-foreground));
-  }
-
-  .bg-secondary {
-    background-color: hsl(var(--secondary));
-  }
-
-  .text-secondary-foreground {
-    color: hsl(var(--secondary-foreground));
-  }
-
-  .bg-muted {
-    background-color: hsl(var(--muted));
-  }
-
-  .text-muted-foreground {
-    color: hsl(var(--muted-foreground));
-  }
-
-  .bg-accent {
-    background-color: hsl(var(--accent));
-  }
-
-  .text-accent-foreground {
-    color: hsl(var(--accent-foreground));
-  }
-
-  .bg-destructive {
-    background-color: hsl(var(--destructive));
-  }
-
-  .text-destructive {
-    color: hsl(var(--destructive));
-  }
-
-  .text-destructive-foreground {
-    color: hsl(var(--destructive-foreground));
-  }
-
-  .border-input {
-    border-color: hsl(var(--input));
-  }
-
-  .ring-ring {
-    --tw-ring-color: hsl(var(--ring));
-  }
+  .bg-background { background-color: hsl(var(--background)); }
+  .text-foreground { color: hsl(var(--foreground)); }
+  .bg-card { background-color: hsl(var(--card)); }
+  .text-card-foreground { color: hsl(var(--card-foreground)); }
+  .bg-primary { background-color: hsl(var(--primary)); }
+  .text-primary { color: hsl(var(--primary)); }
+  .text-primary-foreground { color: hsl(var(--primary-foreground)); }
+  .bg-secondary { background-color: hsl(var(--secondary)); }
+  .text-secondary-foreground { color: hsl(var(--secondary-foreground)); }
+  .bg-muted { background-color: hsl(var(--muted)); }
+  .text-muted-foreground { color: hsl(var(--muted-foreground)); }
+  .bg-accent { background-color: hsl(var(--accent)); }
+  .text-accent-foreground { color: hsl(var(--accent-foreground)); }
+  .bg-destructive { background-color: hsl(var(--destructive)); }
+  .text-destructive { color: hsl(var(--destructive)); }
+  .text-destructive-foreground { color: hsl(var(--destructive-foreground)); }
+  .border-input { border-color: hsl(var(--input)); }
+  .ring-ring { --tw-ring-color: hsl(var(--ring)); }
 }
 
-/* React Day Picker Custom Styles */
+/* ===== REACT DAY PICKER ===== */
 .rdp {
   --rdp-cell-size: 40px;
   --rdp-accent-color: hsl(var(--primary));
@@ -203,219 +323,106 @@
 }
 
 .rdp-day_selected:hover:not([disabled]) {
-  @apply bg-blue-700;
+  background-color: var(--niramaya-teal-accent);
 }
 
-/* Animation keyframes */
+/* ===== ANIMATION KEYFRAMES ===== */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(30px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 @keyframes pulse {
-
-  0%,
-  100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.7;
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
 }
 
 @keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-
-  100% {
-    background-position: 200% 0;
-  }
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
 @keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-10px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 @keyframes bounce {
-
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-5px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
 }
 
-/* Animation utility classes */
-.animate-fade-in {
-  opacity: 0;
-  animation: fadeIn 0.4s ease-out forwards;
+@keyframes pulseRed {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(231, 29, 54, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 20px rgba(231, 29, 54, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(231, 29, 54, 0); }
 }
 
-.animate-slide-up {
-  opacity: 0;
-  transform: translateY(20px);
-  animation: slideUp 0.5s ease-out forwards;
+@keyframes pulseTeal {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 128, 128, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 20px rgba(0, 128, 128, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 128, 128, 0); }
 }
 
-.animate-slide-down {
-  opacity: 0;
-  transform: translateY(-20px);
-  animation: slideDown 0.5s ease-out forwards;
+@keyframes ecgLine {
+  0% { stroke-dashoffset: 2000; }
+  100% { stroke-dashoffset: 0; }
 }
 
-.animate-slide-left {
-  opacity: 0;
-  transform: translateX(-20px);
-  animation: slideInLeft 0.5s ease-out forwards;
-}
-
-.animate-slide-right {
-  opacity: 0;
-  transform: translateX(20px);
-  animation: slideInRight 0.5s ease-out forwards;
-}
-
-.animate-scale-in {
-  opacity: 0;
-  transform: scale(0.9);
-  animation: scaleIn 0.3s ease-out forwards;
-}
-
-.animate-pulse {
-  animation: pulse 2s ease-in-out infinite;
-}
-
+/* ===== ANIMATION UTILITIES ===== */
+.animate-fade-in { opacity: 0; animation: fadeIn 0.4s ease-out forwards; }
+.animate-slide-up { opacity: 0; transform: translateY(20px); animation: slideUp 0.5s ease-out forwards; }
+.animate-slide-down { opacity: 0; transform: translateY(-20px); animation: slideDown 0.5s ease-out forwards; }
+.animate-slide-left { opacity: 0; transform: translateX(-20px); animation: slideInLeft 0.5s ease-out forwards; }
+.animate-slide-right { opacity: 0; transform: translateX(20px); animation: slideInRight 0.5s ease-out forwards; }
+.animate-scale-in { opacity: 0; transform: scale(0.9); animation: scaleIn 0.3s ease-out forwards; }
+.animate-pulse { animation: pulse 2s ease-in-out infinite; }
 .animate-shimmer {
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
+.animate-float { animation: float 3s ease-in-out infinite; }
+.animate-bounce { animation: bounce 1s ease-in-out infinite; }
 
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
+/* Staggered delays */
+.animate-delay-100 { animation-delay: 100ms; }
+.animate-delay-200 { animation-delay: 200ms; }
+.animate-delay-300 { animation-delay: 300ms; }
+.animate-delay-400 { animation-delay: 400ms; }
+.animate-delay-500 { animation-delay: 500ms; }
+.animate-delay-600 { animation-delay: 600ms; }
+.animate-delay-700 { animation-delay: 700ms; }
+.animate-delay-800 { animation-delay: 800ms; }
 
-.animate-bounce {
-  animation: bounce 1s ease-in-out infinite;
-}
+/* ===== TRANSITION UTILITIES ===== */
+.page-transition { animation: fadeIn 0.3s ease-out, slideUp 0.4s ease-out; }
 
-/* Staggered animation delays */
-.animate-delay-100 {
-  animation-delay: 100ms;
-}
-
-.animate-delay-200 {
-  animation-delay: 200ms;
-}
-
-.animate-delay-300 {
-  animation-delay: 300ms;
-}
-
-.animate-delay-400 {
-  animation-delay: 400ms;
-}
-
-.animate-delay-500 {
-  animation-delay: 500ms;
-}
-
-.animate-delay-600 {
-  animation-delay: 600ms;
-}
-
-.animate-delay-700 {
-  animation-delay: 700ms;
-}
-
-.animate-delay-800 {
-  animation-delay: 800ms;
-}
-
-/* Page transition wrapper */
-.page-transition {
-  animation: fadeIn 0.3s ease-out, slideUp 0.4s ease-out;
-}
-
-/* Card hover effects */
 .card-hover {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -425,341 +432,126 @@
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
-/* Button hover effects */
-.btn-hover {
-  transition: all 0.2s ease-out;
-}
-
+.btn-hover { transition: all 0.2s ease-out; }
 .btn-hover:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 128, 128, 0.4);
 }
-
-.btn-hover:active {
-  transform: translateY(0);
-}
+.btn-hover:active { transform: translateY(0); }
 
 /* Smooth transitions for interactive elements */
-a,
-button,
-.interactive {
-  transition: all 0.2s ease-out;
-}
+a, button, .interactive { transition: all 0.2s ease-out; }
+tr { transition: background-color 0.15s ease-out; }
+input, textarea, select { transition: border-color 0.2s ease-out, box-shadow 0.2s ease-out; }
 
-/* Table row hover */
-tr {
-  transition: background-color 0.15s ease-out;
-}
-
-/* Input focus transitions */
-input,
-textarea,
-select {
-  transition: border-color 0.2s ease-out, box-shadow 0.2s ease-out;
-}
-
-/* Sidebar link transitions */
-.sidebar-link {
-  transition: all 0.2s ease-out;
-}
-
-.sidebar-link:hover {
-  transform: translateX(4px);
-}
+.sidebar-link { transition: all 0.2s ease-out; }
+.sidebar-link:hover { transform: translateX(4px); }
 
 /* Modal/Dialog animation */
-.modal-backdrop {
-  animation: fadeIn 0.2s ease-out;
-}
-
-.modal-content {
-  animation: scaleIn 0.3s ease-out;
-}
+.modal-backdrop { animation: fadeIn 0.2s ease-out; }
+.modal-content { animation: scaleIn 0.3s ease-out; }
 
 /* Toast/Notification animation */
-.toast-enter {
-  animation: slideInRight 0.3s ease-out;
-}
+.toast-enter { animation: slideInRight 0.3s ease-out; }
+.toast-exit { animation: slideInRight 0.3s ease-out reverse; }
 
-.toast-exit {
-  animation: slideInRight 0.3s ease-out reverse;
-}
-
-/* Loading skeleton animation */
+/* Loading skeleton */
 .skeleton {
   background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
 
-/* ===== JELLY MOTION ANIMATIONS ===== */
-
-/* Jelly bounce keyframes */
+/* ===== JELLY MOTION ===== */
 @keyframes jelly {
-
-  0%,
-  100% {
-    transform: scale(1, 1);
-  }
-
-  25% {
-    transform: scale(0.95, 1.05);
-  }
-
-  50% {
-    transform: scale(1.05, 0.95);
-  }
-
-  75% {
-    transform: scale(0.98, 1.02);
-  }
-}
-
-@keyframes jellyPop {
-  0% {
-    transform: scale(0);
-    opacity: 0;
-  }
-
-  50% {
-    transform: scale(1.1);
-    opacity: 1;
-  }
-
-  70% {
-    transform: scale(0.95);
-  }
-
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes jellyBounce {
-  0% {
-    transform: translateY(0) scale(1);
-  }
-
-  20% {
-    transform: translateY(-15px) scale(1.02, 0.98);
-  }
-
-  40% {
-    transform: translateY(0) scale(0.98, 1.02);
-  }
-
-  60% {
-    transform: translateY(-8px) scale(1.01, 0.99);
-  }
-
-  80% {
-    transform: translateY(0) scale(0.99, 1.01);
-  }
-
-  100% {
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes elasticScale {
-  0% {
-    transform: scale(1);
-  }
-
-  30% {
-    transform: scale(1.15);
-  }
-
-  40% {
-    transform: scale(0.9);
-  }
-
-  50% {
-    transform: scale(1.08);
-  }
-
-  65% {
-    transform: scale(0.97);
-  }
-
-  75% {
-    transform: scale(1.02);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
-@keyframes rubberBand {
-  0% {
-    transform: scale(1);
-  }
-
-  30% {
-    transform: scaleX(1.25) scaleY(0.75);
-  }
-
-  40% {
-    transform: scaleX(0.75) scaleY(1.25);
-  }
-
-  50% {
-    transform: scaleX(1.15) scaleY(0.85);
-  }
-
-  65% {
-    transform: scaleX(0.95) scaleY(1.05);
-  }
-
-  75% {
-    transform: scaleX(1.05) scaleY(0.95);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
-@keyframes wobble {
-
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-
-  15% {
-    transform: translateX(-8px) rotate(-3deg);
-  }
-
-  30% {
-    transform: translateX(6px) rotate(2deg);
-  }
-
-  45% {
-    transform: translateX(-4px) rotate(-1deg);
-  }
-
-  60% {
-    transform: translateX(2px) rotate(0.5deg);
-  }
-
-  75% {
-    transform: translateX(-1px) rotate(-0.25deg);
-  }
-}
-
-/* Jelly animation utility classes */
-.animate-jelly {
-  animation: jelly 0.8s ease-in-out;
-}
-
-/* Smooth jelly pop - no opacity/scale initial state to prevent disappearing on tap */
-.animate-jelly-pop {
-  animation: jellyPopSmooth 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  0%, 100% { transform: scale(1, 1); }
+  25% { transform: scale(0.95, 1.05); }
+  50% { transform: scale(1.05, 0.95); }
+  75% { transform: scale(0.98, 1.02); }
 }
 
 @keyframes jellyPopSmooth {
-  0% {
-    transform: scale(0.85);
-  }
-
-  40% {
-    transform: scale(1.05);
-  }
-
-  60% {
-    transform: scale(0.97);
-  }
-
-  80% {
-    transform: scale(1.02);
-  }
-
-  100% {
-    transform: scale(1);
-  }
+  0% { transform: scale(0.85); }
+  40% { transform: scale(1.05); }
+  60% { transform: scale(0.97); }
+  80% { transform: scale(1.02); }
+  100% { transform: scale(1); }
 }
 
-.animate-jelly-bounce {
-  animation: jellyBounce 1s ease-in-out forwards;
+@keyframes jellyBounce {
+  0% { transform: translateY(0) scale(1); }
+  20% { transform: translateY(-15px) scale(1.02, 0.98); }
+  40% { transform: translateY(0) scale(0.98, 1.02); }
+  60% { transform: translateY(-8px) scale(1.01, 0.99); }
+  80% { transform: translateY(0) scale(0.99, 1.01); }
+  100% { transform: translateY(0) scale(1); }
 }
 
-.animate-elastic {
-  animation: elasticScale 0.8s ease-out forwards;
+@keyframes elasticScale {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.15); }
+  40% { transform: scale(0.9); }
+  50% { transform: scale(1.08); }
+  65% { transform: scale(0.97); }
+  75% { transform: scale(1.02); }
+  100% { transform: scale(1); }
 }
 
-.animate-rubber {
-  animation: rubberBand 1s ease-out forwards;
+@keyframes rubberBand {
+  0% { transform: scale(1); }
+  30% { transform: scaleX(1.25) scaleY(0.75); }
+  40% { transform: scaleX(0.75) scaleY(1.25); }
+  50% { transform: scaleX(1.15) scaleY(0.85); }
+  65% { transform: scaleX(0.95) scaleY(1.05); }
+  75% { transform: scaleX(1.05) scaleY(0.95); }
+  100% { transform: scale(1); }
 }
 
-.animate-wobble {
-  animation: wobble 1s ease-in-out forwards;
+@keyframes wobble {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-8px) rotate(-3deg); }
+  30% { transform: translateX(6px) rotate(2deg); }
+  45% { transform: translateX(-4px) rotate(-1deg); }
+  60% { transform: translateX(2px) rotate(0.5deg); }
+  75% { transform: translateX(-1px) rotate(-0.25deg); }
 }
 
-/* Jelly hover effects */
-.jelly-hover {
-  transition: transform 0.2s ease-out;
-}
+/* Jelly utility classes */
+.animate-jelly { animation: jelly 0.8s ease-in-out; }
+.animate-jelly-pop { animation: jellyPopSmooth 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+.animate-jelly-bounce { animation: jellyBounce 1s ease-in-out forwards; }
+.animate-elastic { animation: elasticScale 0.8s ease-out forwards; }
+.animate-rubber { animation: rubberBand 1s ease-out forwards; }
+.animate-wobble { animation: wobble 1s ease-in-out forwards; }
 
-.jelly-hover:hover {
-  animation: jelly 0.4s ease-in-out;
-}
+.jelly-hover { transition: transform 0.2s ease-out; }
+.jelly-hover:hover { animation: jelly 0.4s ease-in-out; }
+.jelly-hover:active { transform: scale(0.95); }
 
-.jelly-hover:active {
-  transform: scale(0.95);
-}
-
-/* Button with jelly effect */
-button,
-.btn,
-[role="button"] {
+button, .btn, [role="button"] {
   transition: transform 0.15s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
-
-button:active,
-.btn:active,
-[role="button"]:active {
+button:active, .btn:active, [role="button"]:active {
   transform: scale(0.95);
 }
 
-/* Card jelly hover */
-.card,
-[class*="Card"] {
+.card, [class*="Card"] {
   transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55), box-shadow 0.3s ease;
 }
-
-.card:hover,
-[class*="Card"]:hover {
+.card:hover, [class*="Card"]:hover {
   transform: translateY(-4px) scale(1.01);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 
-/* Interactive elements jelly effect */
-.interactive-jelly {
-  transition: transform 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
+.interactive-jelly { transition: transform 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+.interactive-jelly:hover { transform: scale(1.05); }
+.interactive-jelly:active { transform: scale(0.95); }
 
-.interactive-jelly:hover {
-  transform: scale(1.05);
-}
+* { scroll-behavior: smooth; }
 
-.interactive-jelly:active {
-  transform: scale(0.95);
-}
-
-/* Smooth scroll behavior for all containers */
-* {
-  scroll-behavior: smooth;
-}
-
-/* Reduce motion for users who prefer it */
+/* Reduce motion */
 @media (prefers-reduced-motion: reduce) {
-
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

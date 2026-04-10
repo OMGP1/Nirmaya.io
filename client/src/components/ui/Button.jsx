@@ -46,7 +46,7 @@ const buttonVariants = cva(
 );
 
 const Button = React.forwardRef(
-    ({ className, variant, size, fullWidth, asChild = false, loading = false, children, ...props }, ref) => {
+    ({ className, variant, size, fullWidth, asChild = false, loading = false, leftIcon, rightIcon, children, ...props }, ref) => {
         // Don't use Slot when loading - render as regular button
         const Comp = asChild && !loading ? Slot : 'button';
 

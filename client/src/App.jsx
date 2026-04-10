@@ -21,6 +21,12 @@ import Departments from '@/pages/Departments';
 import About from '@/pages/About';
 import Settings from '@/pages/Settings';
 import HealthRiskAssessment from '@/pages/HealthRiskAssessment';
+
+// Niramaya Patient Pages
+import SymptomTriage from '@/pages/SymptomTriage';
+import TriageResults from '@/pages/TriageResults';
+import CareCircle from '@/pages/CareCircle';
+import MedicalVault from '@/pages/MedicalVault';
 import PatientVitals from '@/pages/PatientVitals';
 
 // Auth pages
@@ -117,6 +123,40 @@ function App() {
                                 element={
                                     <ProtectedRoute>
                                         <PatientVitals />
+                                    </ProtectedRoute>
+                                }
+                            />
+
+                            {/* Niramaya Patient Pages */}
+                            <Route
+                                path="/symptom-triage"
+                                element={
+                                    <ProtectedRoute>
+                                        <SymptomTriage />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/triage-results"
+                                element={
+                                    <ProtectedRoute>
+                                        <TriageResults />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/care-circle"
+                                element={
+                                    <ProtectedRoute>
+                                        <CareCircle />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/medical-vault"
+                                element={
+                                    <ProtectedRoute>
+                                        <MedicalVault />
                                     </ProtectedRoute>
                                 }
                             />

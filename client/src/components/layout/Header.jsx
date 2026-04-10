@@ -25,7 +25,7 @@ const Header = () => {
     const navigate = useNavigate();
 
     const navLinks = [
-        { href: '/doctors', label: 'Find Doctors' },
+        { href: '/doctors', label: 'Find Specialists' },
         { href: '/departments', label: 'Departments' },
         { href: '/about', label: 'About' },
     ];

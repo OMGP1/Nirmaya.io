@@ -50,7 +50,7 @@ CREATE INDEX idx_appointments_status ON public.appointments(status);
 
 -- Date-based queries
 CREATE INDEX idx_appointments_start_time ON public.appointments(start_time);
-CREATE INDEX idx_appointments_date ON public.appointments(DATE(start_time));
+CREATE INDEX idx_appointments_date ON public.appointments((CAST(start_time AT TIME ZONE 'UTC' AS DATE)));
 
 -- Active appointments for double-booking prevention
 CREATE INDEX idx_appointments_active ON public.appointments(doctor_id, start_time) 
