@@ -19,7 +19,7 @@ import { useAuth } from '@/hooks/useAuth';
 const QuickReply = ({ text, onClick }) => (
     <button
         onClick={() => onClick(text)}
-        className="px-4 py-2 bg-white/90 backdrop-blur-sm border border-purple-100 rounded-full text-sm font-medium text-purple-700 hover:bg-purple-50 hover:border-purple-300 hover:shadow-md transition-all duration-200 whitespace-nowrap"
+        className="px-4 py-2 bg-white/90 backdrop-blur-sm border border-slate-200 rounded-full text-sm font-medium text-niramaya-teal-accent hover:bg-niramaya-teal/10 hover:border-niramaya-teal/30 hover:shadow-md transition-all duration-200 whitespace-nowrap"
     >
         {text}
     </button>
@@ -28,17 +28,17 @@ const QuickReply = ({ text, onClick }) => (
 const DoctorCard = ({ doctor, onSelect }) => (
     <div
         onClick={() => onSelect(doctor)}
-        className="flex items-center gap-3 p-4 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl cursor-pointer hover:from-purple-100 hover:to-indigo-100 transition-all duration-300 border border-purple-100 hover:border-purple-200 hover:shadow-lg group"
+        className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl cursor-pointer hover:bg-niramaya-teal/5 transition-all duration-300 border border-slate-200 hover:border-niramaya-teal hover:shadow-teal-glow group"
     >
-        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-niramaya-teal to-niramaya-teal-accent flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
             <User className="w-6 h-6 text-white" />
         </div>
         <div className="flex-1">
             <p className="font-semibold text-gray-900">Dr. {doctor.name}</p>
-            <p className="text-sm text-purple-600">{doctor.specialization || doctor.departmentName}</p>
+            <p className="text-sm text-niramaya-teal-accent">{doctor.specialization || doctor.departmentName}</p>
         </div>
-        <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center group-hover:bg-purple-200 transition-colors">
-            <ArrowRight className="w-4 h-4 text-purple-600" />
+        <div className="w-8 h-8 rounded-full bg-niramaya-teal/10 flex items-center justify-center group-hover:bg-niramaya-teal/20 transition-colors">
+            <ArrowRight className="w-4 h-4 text-niramaya-teal-accent" />
         </div>
     </div>
 );
@@ -46,7 +46,7 @@ const DoctorCard = ({ doctor, onSelect }) => (
 const TimeSlotButton = ({ slot, onSelect }) => (
     <button
         onClick={() => onSelect(slot)}
-        className="px-3 py-2.5 bg-white border border-purple-100 rounded-xl text-sm font-medium text-gray-700 hover:bg-gradient-to-r hover:from-purple-500 hover:to-indigo-600 hover:text-white hover:border-transparent transition-all duration-300 flex items-center gap-2 shadow-sm hover:shadow-lg"
+        className="px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-niramaya-teal hover:text-white hover:border-transparent transition-all duration-300 flex items-center gap-2 shadow-sm hover:shadow-lg"
     >
         <Clock className="w-4 h-4" />
         {slot.display}
@@ -189,65 +189,43 @@ const ChatWindow = ({ isOpen, onClose }) => {
         setMessages(prev => [...prev, userMessage]);
         
         try {
-            const res = await fetch('http://localhost:8000/voice-triage', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ transcript })
-            });
-            const AI = await res.json();
+            // Re-route voice transcript natively through chatbot service
+            const response = await sendMessage(transcript, sessionKey);
             
-            // Try matching department roughly
-            const { supabase } = await import('@/lib/supabase');
-            const searchKeyword = AI.target_specialty.split(' ')[0];
-            const { data: dept } = await supabase.from('departments').select('id, name').ilike('name', `%${searchKeyword}%`).limit(1);
-            
-            let deptId = null, deptName = AI.target_specialty;
-            if (dept && dept.length > 0) {
-                deptId = dept[0].id;
-                deptName = dept[0].name;
+            const botMessage = {
+                id: Date.now() + 1,
+                text: response.message,
+                isBot: true,
+                timestamp: new Date().toISOString(),
+                intent: response.intent,
+                departmentInfo: response.departmentInfo
+            };
+
+            setMessages(prev => [...prev, botMessage]);
+
+            if (response.navigation) {
+                setPendingBooking({
+                    navigation: response.navigation,
+                    department: response.departmentInfo?.name,
+                    doctors: response.doctors
+                });
             }
 
-            const { data: doctors } = await supabase.from('doctors').select('id, user:users(full_name)').eq('department_id', deptId).eq('is_active', true).limit(1);
-            
-            if (!doctors || doctors.length === 0) {
-                 setMessages(prev => [...prev, { id: Date.now()+1, text: `You need a ${AI.target_specialty}, but we currently have no available doctors in that department.`, isBot: true, timestamp: new Date().toISOString() }]);
-                 setIsTyping(false);
-                 return;
+            if (response.doctors?.length > 0) {
+                setCurrentDoctors(response.doctors);
+                setCurrentSlots(response.slots || []);
             }
-            
-            const doctor = doctors[0];
-            
-            // Mocking one-turn confirmation matching
-            let timeOffer = new Date();
-            timeOffer.setDate(timeOffer.getDate() + 1);
-            if (AI.preferred_time.toLowerCase().includes('morning')) {
-                // If they want morning, suggest afternoon to demo "unavailable" fallback
-                timeOffer.setHours(14, 0, 0, 0); 
-                setMessages(prev => [...prev, {
-                   id: Date.now() + 1,
-                   text: `I see you requested ${deptName} for ${AI.preferred_time}. However, ${AI.preferred_time} is unavailable. The earliest slot with Dr. ${doctor.user.full_name} is tomorrow at 2:00 PM. Would you like me to book this?`,
-                   isBot: true, timestamp: new Date().toISOString()
-                }]);
-            } else {
-                timeOffer.setHours(10, 0, 0, 0);
-                setMessages(prev => [...prev, {
-                   id: Date.now() + 1,
-                   text: `Dr. ${doctor.user.full_name} (${deptName}) is available for ${AI.preferred_time}. The earliest slot is ${timeOffer.toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}. Shall I book it?`,
-                   isBot: true, timestamp: new Date().toISOString()
-                }]);
+
+            if (response.departmentInfo) {
+                setQuickReplies([
+                    `Book ${response.departmentInfo.name} appointment`,
+                    'View my appointments',
+                    'Show more options'
+                ]);
             }
-            
-            setPendingBooking({
-                doctorId: doctor.id,
-                departmentName: deptName,
-                context_brief: AI.context_brief,
-                datetime: timeOffer.toISOString(),
-                isVoiceAutoBook: true
-            });
-            
-            setQuickReplies(['Yes, book it automatically!', 'No, I want another time']);
         } catch(err) {
-            setMessages(prev => [...prev, { id: Date.now()+1, text: "Triage currently unavailable.", isBot: true, timestamp: new Date().toISOString() }]);
+            console.error('Failed to process voice transcript:', err);
+            setMessages(prev => [...prev, { id: Date.now()+1, text: "I'm sorry, I'm having trouble processing that. Please try again.", isBot: true, timestamp: new Date().toISOString() }]);
         }
         setIsTyping(false);
     };
@@ -347,30 +325,6 @@ const ChatWindow = ({ isOpen, onClose }) => {
     };
 
     const handleQuickReply = async (text) => {
-        if (text === 'Yes, book it automatically!' && pendingBooking && pendingBooking.isVoiceAutoBook) {
-            setIsTyping(true);
-            try {
-                await bookAppointment({
-                    userId: user.id,
-                    doctorId: pendingBooking.doctorId,
-                    datetime: pendingBooking.datetime,
-                    department: pendingBooking.departmentName,
-                    reason: 'Voice Triage Consultation',
-                    context_brief: pendingBooking.context_brief
-                });
-                setMessages(prev => [...prev, {
-                    id: Date.now(),
-                    text: `🎉 Appointment booked successfully! Dr. ${pendingBooking.departmentName} has received your context brief.`,
-                    isBot: true, timestamp: new Date().toISOString()
-                }]);
-                setPendingBooking(null);
-                setQuickReplies(['View my appointments']);
-            } catch (error) {
-                setMessages(prev => [...prev, { id: Date.now(), text: "Failed to book via voice.", isBot: true, timestamp: new Date().toISOString() }]);
-            }
-            setIsTyping(false);
-            return;
-        }
         if (text === 'View my appointments') {
             navigate('/appointments');
             onClose();
@@ -420,21 +374,21 @@ const ChatWindow = ({ isOpen, onClose }) => {
                 onClick={onClose}
             />
 
-            <div className="relative w-full h-[650px] md:w-[420px] md:h-[650px] bg-white rounded-3xl shadow-2xl flex flex-col animate-slide-up overflow-hidden border border-purple-100">
+            <div className="relative w-full h-[650px] md:w-[420px] md:h-[650px] bg-white rounded-3xl shadow-2xl flex flex-col animate-slide-up overflow-hidden border border-slate-200">
                 {/* Header - Premium Gradient */}
-                <div className="flex items-center justify-between p-5 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 text-white">
+                <div className="flex items-center justify-between p-5 bg-gradient-to-r from-niramaya-navy to-niramaya-navy-sidebar text-white">
                     <div className="flex items-center gap-4">
                         <div className="relative">
-                            <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg">
-                                <Sparkles className="w-6 h-6" />
+                            <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center shadow-lg border border-white/10">
+                                <Sparkles className="w-6 h-6 text-niramaya-teal-light" />
                             </div>
-                            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
+                            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-clinical-stable rounded-full border-2 border-niramaya-navy"></div>
                         </div>
                         <div>
-                            <h3 className="font-bold text-lg">HealthBook AI</h3>
-                            <p className="text-sm text-white/80 flex items-center gap-1">
-                                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                                Smart symptom recognition
+                            <h3 className="font-bold text-lg text-white">HealthBook AI</h3>
+                            <p className="text-sm text-slate-300 flex items-center gap-1.5">
+                                <span className="w-2 h-2 bg-clinical-stable rounded-full animate-pulse-teal"></span>
+                                Clinical triage
                             </p>
                         </div>
                     </div>
@@ -456,7 +410,7 @@ const ChatWindow = ({ isOpen, onClose }) => {
                 </div>
 
                 {/* Messages Area */}
-                <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-gradient-to-b from-purple-50/50 to-white">
+                <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-slate-50">
                     {messages.map((msg) => (
                         <Message
                             key={msg.id}
@@ -469,7 +423,7 @@ const ChatWindow = ({ isOpen, onClose }) => {
                     {/* Doctor Cards */}
                     {currentDoctors.length > 0 && (
                         <div className="space-y-3 animate-fade-in">
-                            <p className="text-sm font-semibold text-purple-600 flex items-center gap-2">
+                            <p className="text-sm font-semibold text-niramaya-teal flex items-center gap-2">
                                 <User className="w-4 h-4" />
                                 Available Doctors
                             </p>
@@ -486,7 +440,7 @@ const ChatWindow = ({ isOpen, onClose }) => {
                     {/* Time Slots */}
                     {currentSlots.length > 0 && selectedDoctor && (
                         <div className="space-y-3 animate-fade-in">
-                            <p className="text-sm font-semibold text-purple-600 flex items-center gap-2">
+                            <p className="text-sm font-semibold text-niramaya-teal flex items-center gap-2">
                                 <Clock className="w-4 h-4" />
                                 Available Time Slots
                             </p>
@@ -507,7 +461,7 @@ const ChatWindow = ({ isOpen, onClose }) => {
                         <div className="animate-fade-in">
                             <Button
                                 onClick={handleNavigate}
-                                className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all"
+                                className="w-full bg-niramaya-teal hover:bg-niramaya-teal-accent text-white font-semibold py-3 rounded-xl shadow-md hover:shadow-lg transition-all"
                             >
                                 Go to Booking Page <ArrowRight className="w-4 h-4 ml-2" />
                             </Button>
@@ -520,7 +474,7 @@ const ChatWindow = ({ isOpen, onClose }) => {
 
                 {/* Quick Replies */}
                 {quickReplies.length > 0 && !isTyping && (
-                    <div className="px-5 py-3 flex gap-2 overflow-x-auto no-scrollbar bg-white border-t border-purple-50">
+                    <div className="px-5 py-3 flex gap-2 overflow-x-auto no-scrollbar bg-white border-t border-slate-100">
                         {quickReplies.map((reply, index) => (
                             <QuickReply
                                 key={index}
@@ -532,7 +486,7 @@ const ChatWindow = ({ isOpen, onClose }) => {
                 )}
 
                 {/* Input Area */}
-                <div className="p-4 bg-white border-t border-purple-100">
+                <div className="p-4 bg-white border-t border-slate-100">
                     <div className="flex gap-3">
                         <input
                             ref={inputRef}
@@ -541,13 +495,13 @@ const ChatWindow = ({ isOpen, onClose }) => {
                             onChange={(e) => setInputValue(e.target.value)}
                             onKeyPress={handleKeyPress}
                             placeholder="Describe your symptoms..."
-                            className="flex-1 px-5 py-3.5 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent focus:bg-white transition-all text-gray-700 placeholder-gray-400"
+                            className="flex-1 px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-niramaya-teal/50 focus:border-niramaya-teal/50 focus:bg-white transition-all text-gray-700 placeholder-gray-400"
                             disabled={isTyping || isRecording}
                         />
                         <Button
                             onClick={handleVoiceRecord}
                             disabled={isTyping}
-                            className={`px-4 ${isRecording ? 'bg-red-500 hover:bg-red-600 animate-pulse' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'} rounded-2xl shadow transition-all`}
+                            className={`px-4 ${isRecording ? 'bg-red-500 hover:bg-red-600 animate-pulse' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'} rounded-2xl shadow transition-all`}
                             title="Voice Input"
                         >
                             <Mic className={`w-5 h-5 ${isRecording ? 'text-white' : ''}`} />
@@ -555,7 +509,7 @@ const ChatWindow = ({ isOpen, onClose }) => {
                         <Button
                             onClick={handleSend}
                             disabled={!inputValue.trim() || isTyping}
-                            className="px-5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 rounded-2xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
+                            className="px-5 bg-niramaya-teal hover:bg-niramaya-teal-accent text-white rounded-2xl shadow-md hover:shadow-lg transition-all disabled:opacity-50"
                         >
                             <Send className="w-5 h-5" />
                         </Button>

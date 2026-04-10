@@ -299,7 +299,7 @@ export async function bookAppointment({ userId, doctorId, datetime, department, 
                 start_time: startTime.toISOString(),
                 end_time: endTime.toISOString(),
                 reason: reason || 'Consultation',
-                context_brief: context_brief || null,
+                notes: context_brief || null,
                 status: 'pending'
             })
             .select()

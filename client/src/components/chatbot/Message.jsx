@@ -11,8 +11,8 @@ const Message = ({ message, isBot, timestamp }) => {
         <div className={`flex items-start gap-3 ${isBot ? '' : 'flex-row-reverse'}`}>
             {/* Avatar */}
             <div className={`w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-md ${isBot
-                    ? 'bg-gradient-to-br from-purple-500 to-indigo-600'
-                    : 'bg-gradient-to-br from-blue-500 to-cyan-500'
+                    ? 'bg-gradient-to-br from-niramaya-teal to-niramaya-teal-accent'
+                    : 'bg-gradient-to-br from-niramaya-navy to-niramaya-navy-sidebar'
                 }`}>
                 {isBot ? (
                     <Sparkles className="w-5 h-5 text-white" />
@@ -24,8 +24,8 @@ const Message = ({ message, isBot, timestamp }) => {
             {/* Message Bubble */}
             <div className={`max-w-[75%] ${isBot ? '' : 'text-right'}`}>
                 <div className={`inline-block px-4 py-3 rounded-2xl shadow-sm ${isBot
-                        ? 'bg-white border border-purple-100 text-gray-800 rounded-tl-md'
-                        : 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-tr-md'
+                        ? 'bg-white border border-slate-200 text-slate-800 rounded-tl-md'
+                        : 'bg-gradient-to-r from-niramaya-teal to-niramaya-teal-accent text-white rounded-tr-md'
                     }`}>
                     <p className="text-sm leading-relaxed whitespace-pre-wrap">{message}</p>
                 </div>
@@ -43,14 +43,14 @@ const Message = ({ message, isBot, timestamp }) => {
 export const TypingIndicator = () => {
     return (
         <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center flex-shrink-0 shadow-md">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-niramaya-teal to-niramaya-teal-accent flex items-center justify-center flex-shrink-0 shadow-md">
                 <Sparkles className="w-5 h-5 text-white" />
             </div>
-            <div className="bg-white border border-purple-100 px-5 py-4 rounded-2xl rounded-tl-md shadow-sm">
+            <div className="bg-white border border-slate-200 px-5 py-4 rounded-2xl rounded-tl-md shadow-sm">
                 <div className="flex gap-1.5">
-                    <div className="w-2.5 h-2.5 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                    <div className="w-2.5 h-2.5 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                    <div className="w-2.5 h-2.5 bg-purple-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    <div className="w-2.5 h-2.5 bg-niramaya-teal/60 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                    <div className="w-2.5 h-2.5 bg-niramaya-teal/80 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                    <div className="w-2.5 h-2.5 bg-niramaya-teal rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
                 </div>
             </div>
         </div>
