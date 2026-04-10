@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+dist/
+build/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Testing
+coverage/
+
+# Misc
+.cache/
+.temp/
+
+# Python / ML Service
+ml-service/venv/
+ml-service/models/
+ml-service/__pycache__/
+*.pyc
+.planning/
