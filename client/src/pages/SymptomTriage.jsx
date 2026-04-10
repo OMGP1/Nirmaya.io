@@ -16,8 +16,32 @@ const SymptomTriage = () => {
   const [input, setInput] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showSOS, setShowSOS] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
   const navigate = useNavigate();
   const { analyzeSymptoms, riskScore } = useNiramaya();
+
+  const handleVoiceInput = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert('Your browser does not support Voice Recognition.');
+      return;
+    }
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+
+    recognition.onstart = () => setIsRecording(true);
+    recognition.onresult = (event) => {
+      const transcript = Array.from(event.results)
+        .map((r) => r[0].transcript)
+        .join('');
+      setInput(transcript);
+    };
+    recognition.onend = () => setIsRecording(false);
+    recognition.onerror = () => setIsRecording(false);
+    recognition.start();
+  };
 
   const handleAnalyze = async () => {
     if (input.length < 10) return;
@@ -100,8 +124,23 @@ const SymptomTriage = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <span className="text-xs font-bold text-slate-400">{input.length}/500</span>
-                <button className="flex items-center gap-1 text-xs text-slate-400 hover:text-[#008080] transition-colors">
-                  <Mic className="w-3.5 h-3.5" /> Voice Input
+                <button
+                  onClick={handleVoiceInput}
+                  disabled={isRecording}
+                  className={`flex items-center gap-1.5 text-xs font-bold transition-colors ${
+                    isRecording
+                      ? 'text-red-500 animate-pulse'
+                      : 'text-slate-400 hover:text-[#008080]'
+                  }`}
+                >
+                  {isRecording && (
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+                    </span>
+                  )}
+                  <Mic className="w-3.5 h-3.5" />
+                  {isRecording ? 'Listening...' : 'Voice Input'}
                 </button>
               </div>
               <div className="flex items-center gap-3">
