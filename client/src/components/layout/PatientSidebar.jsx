@@ -17,9 +17,11 @@ import {
   LogOut,
   ShieldCheck,
   Menu,
-  X
+  X,
+  MessageCircle
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import ChatWindow from '@/components/chatbot/ChatWindow';
 
 const navItems = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -35,6 +37,7 @@ const PatientSidebar = () => {
   const { pathname } = useLocation();
   const { signOut } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
 
   // Close sidebar on navigation change
   useEffect(() => {
@@ -125,18 +128,27 @@ const PatientSidebar = () => {
         </button>
       </nav>
 
-      {/* Engine Status */}
-      <div className="mt-auto pt-6 border-t border-white/10">
-        <p className="text-xs font-bold text-[#008080] uppercase mb-2 tracking-wider">Engine Status</p>
-        <div className="flex items-center gap-3">
-          <span className="relative flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#008080] opacity-75" />
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#008080]" />
-          </span>
-          <p className="text-sm font-medium text-white">BioBERT Online</p>
+      {/* Engine Status / AI Trigger */}
+      <div 
+        onClick={() => setChatOpen(true)}
+        className="mt-auto pt-6 border-t border-white/10 cursor-pointer group hover:bg-white/5 p-4 -mx-4 rounded-xl transition-all"
+      >
+        <p className="text-xs font-bold text-[#008080] uppercase mb-2 tracking-wider group-hover:text-[#00A0A0]">AI Assistant</p>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#008080] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#008080]" />
+            </span>
+            <p className="text-sm font-medium text-white group-hover:text-white/90">BioBERT Online</p>
+          </div>
+          <MessageCircle className="w-4 h-4 text-white/50 group-hover:text-[#008080]" />
         </div>
       </div>
     </aside>
+
+    {/* The AI Assistant Drawer */}
+    <ChatWindow isOpen={chatOpen} onClose={() => setChatOpen(false)} />
     </>
   );
 };

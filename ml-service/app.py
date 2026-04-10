@@ -56,6 +56,24 @@ except Exception as e:
 
 
 # ---------------------------------------------------------------------------
+# Load Intelligence Pipeline (BioBERT + Protocols)
+# ---------------------------------------------------------------------------
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), "intelligence"))
+try:
+    from inference_engine import NiramayaBrain
+    from protocol_engine import ProtocolEngine
+    
+    niramaya_brain = NiramayaBrain(base_path=os.path.join(os.path.dirname(__file__), "intelligence"))
+    protocol_engine = ProtocolEngine()
+    print("[✓] Niramaya Intelligence Engines Loaded")
+except Exception as e:
+    print(f"[!] Errored loading Niramaya Intelligence: {e}")
+    niramaya_brain = None
+    protocol_engine = None
+
+
+# ---------------------------------------------------------------------------
 # Schemas
 # ---------------------------------------------------------------------------
 class HealthInput(BaseModel):
@@ -87,6 +105,16 @@ class VoiceTriageOutput(BaseModel):
     target_specialty: str
     preferred_time: str
     context_brief: str
+
+class SymptomInput(BaseModel):
+    transcript: str
+
+class SymptomOutput(BaseModel):
+    department: str
+    confidence: float
+    risk_score: float
+    risk_status: str
+    protocol_advice: str
 
 
 # ---------------------------------------------------------------------------
@@ -232,3 +260,31 @@ def voice_triage(data: VoiceTriageInput):
     except Exception as e:
         print(f"Groq API Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/analyze-symptoms", response_model=SymptomOutput)
+def analyze_symptoms(data: SymptomInput):
+    if niramaya_brain is None or protocol_engine is None:
+        raise HTTPException(status_code=503, detail="Niramaya Brain is offline")
+
+    # 1. NLP Triage
+    triage_result = niramaya_brain.get_triage(data.transcript)
+    
+    # 2. Heuristic Vital Parsing (Fallback random vitals for prototype, or parse from transcript)
+    is_critical = any(word in data.transcript.lower() for word in ["pain", "emergency", "breath", "blood", "severe"])
+    
+    hr = 120 if is_critical else 75
+    spo2 = 90 if is_critical else 98
+    rr = 28 if is_critical else 16
+    
+    risk_result = niramaya_brain.get_risk(hr, spo2, rr)
+    
+    # 3. Protocol
+    advice = protocol_engine.get_advice(triage_result['specialty'], risk_result['risk_score'])
+    
+    return SymptomOutput(
+        department=triage_result['specialty'],
+        confidence=triage_result['confidence'],
+        risk_score=risk_result['risk_score'],
+        risk_status=risk_result['status'],
+        protocol_advice=advice
+    )

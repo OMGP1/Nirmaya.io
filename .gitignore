@@ -36,5 +36,14 @@ ml-service/venv/
 ml-service/models/
 ml-service/__pycache__/
 *.pyc
+
+# Large ML model weights (too big for GitHub)
+ml-service/intelligence/triage/results/
+ml-service/intelligence/triage/niramaya_triage_model/*.safetensors
+ml-service/intelligence/risk/*.json
+*.pt
+*.bin
+*.safetensors
+
 .planning/
 .vercel

@@ -6,3 +6,6 @@ numpy
 pydantic==2.11.3
 joblib==1.4.2
 groq==0.13.0
+torch
+transformers
+xgboost

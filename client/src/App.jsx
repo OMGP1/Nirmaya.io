@@ -184,9 +184,6 @@ function App() {
                             <Route path="*" element={<NotFound />} />
                         </Routes>
 
-                        {/* AI Chatbot - Patient portal only */}
-                        <PatientChatBubble />
-
                         {/* React Hot Toast - Beautiful notifications */}
                         <Toaster
                             position="top-right"

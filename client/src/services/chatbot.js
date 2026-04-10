@@ -106,21 +106,20 @@ function analyzeSymptoms(message) {
 }
 
 /**
- * Generate response based on user message
+ * Generate response based on user message using BioBERT FastAPI
  */
 async function generateResponse(message, userId) {
     const lowerMessage = message.toLowerCase();
 
     // Check for booking intent
-    if (lowerMessage.includes('book') && lowerMessage.includes('appointment')) {
+    if (lowerMessage.includes('book') && lowerMessage.includes('appointment') && lowerMessage.split(' ').length < 5) {
         return {
-            message: "I'd be happy to help you book an appointment! 📅 Please describe your symptoms or tell me which department you'd like to visit.",
+            message: "I'd be happy to help you book an appointment! 📅 Please describe your symptoms in detail so I can analyze and route you to the correct department.",
             intent: 'booking',
-            quickReplies: ['I have a headache', 'General checkup', 'Show all departments']
+            quickReplies: ['I have a headache', 'General checkup']
         };
     }
 
-    // Check for viewing appointments
     if (lowerMessage.includes('view') && lowerMessage.includes('appointment')) {
         return {
             message: "Sure! Click below to view your appointments.",
@@ -129,11 +128,43 @@ async function generateResponse(message, userId) {
         };
     }
 
-    // Analyze symptoms
-    const analysis = analyzeSymptoms(message);
-
-    if (analysis) {
-        // Fetch doctors from this department
+    try {
+        // ML Backend Integration
+        const res = await fetch('http://localhost:8000/analyze-symptoms', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ transcript: message })
+        });
+        
+        if (!res.ok) throw new Error("Backend not responding");
+        
+        const analysis = await res.json();
+        const department = analysis.department || 'General Medicine';
+        
+        // Fetch doctors based on the AI routed department
+        const doctors = await fetchDoctorsByDepartment(department);
+        const slots = generateTimeSlots();
+        
+        let responseMessage = `Based on my analysis (BioBERT Confidence: ${Math.round(analysis.confidence*100)}%), I recommend consulting our **${department}** department.\n\n${getDepartmentDescription(department)}\n\n_Clinical Advice: ${analysis.protocol_advice}_`;
+        
+        return {
+            message: responseMessage,
+            intent: 'symptom_analysis',
+            departmentInfo: { name: department },
+            riskScore: analysis.risk_score,
+            riskStatus: analysis.risk_status,
+            doctors: doctors,
+            slots: slots,
+            navigation: {
+                page: '/book',
+                params: { department: department }
+            }
+        };
+    } catch (error) {
+        console.warn('Falling back to local heuristic analysis:', error);
+        // Fallback to old heuristic logic embedded here
+        const analysis = analyzeSymptoms(message) || { department: 'General Medicine' };
+        
         const doctors = await fetchDoctorsByDepartment(analysis.department);
         const slots = generateTimeSlots();
 
@@ -149,13 +180,6 @@ async function generateResponse(message, userId) {
             }
         };
     }
-
-    // Default response
-    return {
-        message: "I'm here to help you book appointments! Please describe your symptoms (e.g., 'I have a headache' or 'my back hurts') and I'll recommend the right specialist for you. 🏥",
-        intent: 'general',
-        quickReplies: ['Book appointment', 'I have a headache', 'General checkup']
-    };
 }
 
 /**
