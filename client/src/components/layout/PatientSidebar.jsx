@@ -46,7 +46,7 @@ const PatientSidebar = () => {
       <nav className="flex flex-col gap-2">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = pathname === item.href;
+          const isActive = pathname === item.href || (item.href === '/appointments' && pathname.startsWith('/book'));
           return (
             <Link
               key={item.href}
@@ -73,14 +73,14 @@ const PatientSidebar = () => {
       </nav>
 
       {/* Engine Status */}
-      <div className="mt-auto p-4 bg-white/5 rounded-2xl border border-white/10">
-        <p className="text-xs font-bold text-[#008080] uppercase mb-1 tracking-wider">Engine Status</p>
-        <div className="flex items-center gap-2">
-          <span className="relative flex h-2 w-2">
+      <div className="mt-auto pt-6 border-t border-white/10">
+        <p className="text-xs font-bold text-[#008080] uppercase mb-2 tracking-wider">Engine Status</p>
+        <div className="flex items-center gap-3">
+          <span className="relative flex h-2.5 w-2.5">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#008080] opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#008080]" />
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#008080]" />
           </span>
-          <p className="text-xs font-medium text-white">BioBERT Online</p>
+          <p className="text-sm font-medium text-white">BioBERT Online</p>
         </div>
       </div>
     </aside>

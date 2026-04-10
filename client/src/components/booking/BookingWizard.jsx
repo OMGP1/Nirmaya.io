@@ -36,10 +36,10 @@ const ProgressIndicator = ({ currentStep }) => {
                             <div className="flex flex-col items-center">
                                 <div
                                     className={cn(
-                                        'w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all',
-                                        isCompleted && 'bg-secondary-500 text-white',
-                                        isCurrent && 'bg-primary-600 text-white',
-                                        !isCompleted && !isCurrent && 'bg-gray-200 text-gray-500'
+                                        'w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all shadow-sm z-10 relative mt-2',
+                                        isCompleted && 'bg-[#008080] text-white',
+                                        isCurrent && 'bg-[#1A2B48] text-white shadow-[#1A2B48]/30',
+                                        !isCompleted && !isCurrent && 'bg-slate-100 text-slate-400 border border-slate-200'
                                     )}
                                 >
                                     {isCompleted ? (
@@ -50,8 +50,8 @@ const ProgressIndicator = ({ currentStep }) => {
                                 </div>
                                 <span
                                     className={cn(
-                                        'text-xs mt-2 hidden sm:block',
-                                        (isCompleted || isCurrent) ? 'text-gray-900 font-medium' : 'text-gray-500'
+                                        'text-xs mt-3 hidden sm:block tracking-wide',
+                                        (isCompleted) ? 'text-[#008080] font-bold' : isCurrent ? 'text-[#1A2B48] font-black' : 'text-slate-400 font-medium'
                                     )}
                                 >
                                     {label}
@@ -60,12 +60,14 @@ const ProgressIndicator = ({ currentStep }) => {
 
                             {/* Connector Line */}
                             {!isLast && (
-                                <div
-                                    className={cn(
-                                        'flex-1 h-1 mx-2',
-                                        isCompleted ? 'bg-secondary-500' : 'bg-gray-200'
-                                    )}
-                                />
+                                <div className="flex-1 px-2 relative -mt-5">
+                                    <div
+                                        className={cn(
+                                            'h-1 rounded-full w-full',
+                                            isCompleted ? 'bg-[#008080]/50' : 'bg-slate-100'
+                                        )}
+                                    />
+                                </div>
                             )}
                         </div>
                     );
@@ -103,7 +105,7 @@ const BookingWizard = () => {
             )}
 
             {/* Current Step */}
-            <div className="bg-white rounded-xl shadow-card p-6 md:p-8">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 md:p-8">
                 {renderStep()}
             </div>
         </div>

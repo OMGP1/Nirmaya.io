@@ -73,11 +73,11 @@ const Step1Department = () => {
 
     return (
         <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                Select Department
+            <h2 className="text-2xl font-heading font-black text-[#1A2B48] mb-2">
+                Select Clinical Department
             </h2>
-            <p className="text-gray-600 mb-6">
-                Choose the medical specialty you need.
+            <p className="text-slate-500 font-medium mb-6">
+                Choose the medical specialty you need for your consultation.
             </p>
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -91,26 +91,26 @@ const Step1Department = () => {
                             onClick={() => handleSelect(dept)}
                             hoverable
                             className={cn(
-                                'p-6 text-center cursor-pointer transition-all',
-                                isSelected && 'ring-2 ring-primary-500 bg-primary-50'
+                                'p-6 text-center cursor-pointer transition-all border border-slate-200',
+                                isSelected ? 'ring-2 ring-[#008080] bg-[#008080]/5 shadow-md' : 'hover:border-[#008080]/30 hover:bg-slate-50'
                             )}
                         >
                             <div
                                 className={cn(
-                                    'w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-3',
-                                    isSelected ? 'bg-primary-100' : 'bg-gray-100'
+                                    'w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 border',
+                                    isSelected ? 'bg-white border-[#008080]/20 shadow-sm' : 'bg-slate-50 border-slate-100'
                                 )}
                             >
                                 <Icon
                                     className={cn(
                                         'w-7 h-7',
-                                        isSelected ? 'text-primary-600' : 'text-gray-600'
+                                        isSelected ? 'text-[#008080]' : 'text-slate-400'
                                     )}
                                 />
                             </div>
-                            <h3 className="font-semibold text-gray-900">{dept.name}</h3>
+                            <h3 className="font-heading font-bold text-[#1A2B48]">{dept.name}</h3>
                             {dept.description && (
-                                <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+                                <p className="text-sm text-slate-600 mt-2 leading-relaxed">
                                     {dept.description}
                                 </p>
                             )}

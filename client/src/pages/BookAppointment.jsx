@@ -67,7 +67,7 @@ const BookAppointmentWrapper = () => {
                 <h1 className="text-3xl sm:text-4xl font-heading font-black text-white mb-2">
                     Book Clinical Appointment
                 </h1>
-                <p className="text-primary-100 max-w-2xl text-sm">
+                <p className="text-slate-300 max-w-2xl text-sm font-medium mt-1">
                     Follow the guided steps to schedule your specialist consultation securely.
                 </p>
             </div>
