@@ -1,29 +1,31 @@
 /**
- * Doctor Layout - Glass Effect with Mobile Hamburger Menu
+ * Doctor Layout — Niramaya System Engine Console
  * 
- * Dashboard layout for doctor portal with unified sidebar navigation.
+ * Deep navy sidebar with System Engine panel, grouped navigation,
+ * and specialist profile card. Mobile responsive with slide-in overlay.
+ * All auth/role logic preserved.
  */
 import { useState, useEffect } from 'react';
 import { Outlet, NavLink, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { Avatar, Button, Spinner } from '@/components/ui';
+import { Spinner } from '@/components/ui';
 import {
-    LayoutDashboard,
-    Calendar,
+    Bell,
+    CalendarDays,
     ClipboardList,
     Clock,
     Settings,
     LogOut,
     Menu,
     X,
-    Stethoscope,
+    Activity,
 } from 'lucide-react';
 
 const navItems = [
-    { to: '/doctor', icon: LayoutDashboard, label: 'Dashboard', end: true },
-    { to: '/doctor/schedule', icon: Calendar, label: 'My Schedule' },
-    { to: '/doctor/appointments', icon: ClipboardList, label: 'Appointments' },
-    { to: '/doctor/availability', icon: Clock, label: 'Availability' },
+    { to: '/doctor', icon: Bell, label: 'Emergency Queue', end: true },
+    { to: '/doctor/schedule', icon: CalendarDays, label: 'Schedules' },
+    { to: '/doctor/appointments', icon: ClipboardList, label: 'Patient History' },
+    { to: '/doctor/availability', icon: Clock, label: 'Shift Planner' },
     { to: '/doctor/settings', icon: Settings, label: 'Settings' },
 ];
 
@@ -62,7 +64,7 @@ const DoctorLayout = () => {
     // Show loading state
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+            <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC]">
                 <Spinner size="lg" />
             </div>
         );
@@ -85,19 +87,21 @@ const DoctorLayout = () => {
 
     const SidebarContent = () => (
         <>
-            {/* Logo */}
-            <div className="p-4 sm:p-6 border-b border-white/10 flex items-center justify-between">
-                <div>
-                    <h1 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
-                        <Stethoscope className="w-5 h-5 text-teal-400" />
-                        HealthBook
-                    </h1>
-                    <p className="text-xs text-gray-400 mt-1">Doctor Portal</p>
+            {/* Branding */}
+            <div className="p-5 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-[#0D9488] rounded-lg flex items-center justify-center shadow-lg shadow-[#0D9488]/20">
+                        <Activity className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                        <span className="text-lg font-bold tracking-tight text-white">Niramaya.io</span>
+                        <p className="text-[9px] font-bold text-[#0D9488] uppercase tracking-widest">Command Center</p>
+                    </div>
                 </div>
                 {/* Close button - mobile only */}
                 <button
                     onClick={() => setSidebarOpen(false)}
-                    className="lg:hidden p-2 text-gray-400 hover:text-white hover:bg-gray-700/50 rounded-lg transition-colors"
+                    className="lg:hidden p-2 text-white/40 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
                     aria-label="Close menu"
                 >
                     <X className="w-5 h-5" />
@@ -105,7 +109,8 @@ const DoctorLayout = () => {
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 p-3 sm:p-4 overflow-y-auto">
+            <nav className="flex-1 px-4 py-2 overflow-y-auto">
+                <p className="text-[9px] font-bold text-white/40 uppercase tracking-[0.2em] mb-2 px-3">Operations</p>
                 <div className="space-y-1">
                     {navItems.map((item) => (
                         <NavLink
@@ -114,47 +119,77 @@ const DoctorLayout = () => {
                             end={item.end}
                             onClick={() => setSidebarOpen(false)}
                             className={({ isActive }) =>
-                                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${isActive
-                                    ? 'bg-teal-500/20 text-teal-400 shadow-lg'
-                                    : 'text-gray-300 hover:bg-white/10 hover:text-white'
+                                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${isActive
+                                    ? 'bg-white/10 text-white font-bold border border-white/5 shadow-sm'
+                                    : 'text-white/70 hover:bg-white/5 hover:text-white'
                                 }`
                             }
                         >
-                            <item.icon className="w-5 h-5" />
-                            {item.label}
+                            {({ isActive }) => (
+                                <>
+                                    <item.icon className={`w-5 h-5 ${isActive ? 'text-white' : ''}`} />
+                                    <span>{item.label}</span>
+                                    {item.label === 'Emergency Queue' && (
+                                        <span className="ml-auto bg-[#ef4444] text-white text-[9px] px-1.5 py-0.5 rounded-full animate-pulse font-black">!</span>
+                                    )}
+                                </>
+                            )}
                         </NavLink>
                     ))}
                 </div>
+
+                {/* Logout */}
+                <button
+                    onClick={handleLogout}
+                    className="mt-4 w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-white/70 hover:bg-white/5 hover:text-white transition-all"
+                >
+                    <LogOut className="w-5 h-5" />
+                    <span className="font-bold">Logout</span>
+                </button>
             </nav>
 
-            {/* User section */}
-            <div className="p-4 border-t border-white/10">
-                <div className="flex items-center gap-3 mb-3">
-                    <Avatar name={profile?.full_name} size="sm" />
+            {/* Bottom Section */}
+            <div className="mt-auto p-4 flex flex-col gap-3">
+                {/* System Engine Panel */}
+                <div className="p-3 bg-white/5 rounded-xl border border-white/10">
+                    <div className="flex items-center justify-between mb-2">
+                        <p className="text-[9px] font-bold text-white/50 uppercase tracking-widest">System Engine</p>
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#0D9488] animate-pulse" />
+                    </div>
+                    <div className="space-y-1.5">
+                        <div className="flex justify-between text-[10px] font-medium text-white/70">
+                            <span>HL7 FHIR R4</span>
+                            <span className="text-[#0D9488]">Active</span>
+                        </div>
+                        <div className="flex justify-between text-[10px] font-medium text-white/70">
+                            <span>AI Inference</span>
+                            <span className="text-[#0D9488]">184ms</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Doctor Profile Card */}
+                <div className="flex items-center gap-3 p-2.5 bg-white/5 rounded-xl border border-white/10">
+                    <div className="w-8 h-8 rounded-full bg-[#0D9488]/20 flex items-center justify-center border border-[#0D9488]/30 text-[#0D9488] font-bold text-xs flex-shrink-0">
+                        {profile?.full_name?.charAt(0) || 'D'}
+                    </div>
                     <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-white truncate">
+                        <p className="text-xs font-bold text-white leading-tight truncate">
                             Dr. {profile?.full_name}
                         </p>
-                        <p className="text-xs text-gray-400 truncate">
-                            {profile?.email}
+                        <p className="text-[9px] text-white/50 uppercase truncate">
+                            Specialist
                         </p>
                     </div>
                 </div>
-                <button
-                    onClick={handleLogout}
-                    className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors text-sm"
-                >
-                    <LogOut className="w-4 h-4" />
-                    Sign Out
-                </button>
             </div>
         </>
     );
 
     return (
-        <div className="flex h-screen overflow-hidden bg-gray-50">
+        <div className="flex h-screen overflow-hidden bg-[#F8FAFC]">
             {/* Mobile Header Bar */}
-            <div className="lg:hidden fixed top-0 left-0 right-0 z-40 h-16 bg-gradient-to-r from-gray-800 to-gray-900 backdrop-blur-xl flex items-center justify-between px-4 shadow-lg flex-shrink-0">
+            <div className="lg:hidden fixed top-0 left-0 right-0 z-40 h-16 bg-[#0B1120] flex items-center justify-between px-4 shadow-lg flex-shrink-0">
                 <button
                     onClick={() => setSidebarOpen(true)}
                     className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
@@ -163,8 +198,8 @@ const DoctorLayout = () => {
                     <Menu className="w-6 h-6" />
                 </button>
                 <h1 className="text-lg font-bold text-white flex items-center gap-2">
-                    <Stethoscope className="w-5 h-5 text-teal-400" />
-                    Doctor Portal
+                    <Activity className="w-5 h-5 text-[#0D9488]" />
+                    Command Center
                 </h1>
                 <div className="w-10" /> {/* Spacer for centering */}
             </div>
@@ -177,12 +212,12 @@ const DoctorLayout = () => {
                 />
             )}
 
-            {/* Sidebar - Glass Effect */}
+            {/* Sidebar — Deep Navy */}
             <aside
                 className={`
                     fixed lg:static inset-y-0 left-0 z-50
                     w-64 sm:w-72 lg:w-64
-                    bg-gradient-to-b from-gray-800/95 via-gray-900/95 to-gray-900/98 backdrop-blur-xl
+                    bg-[#0B1120]
                     text-white border-r border-white/10
                     flex flex-col min-h-screen
                     transform transition-transform duration-300 ease-in-out

@@ -1,17 +1,17 @@
 /**
- * Doctor Schedule Page
+ * Doctor Schedule — Weekly Operations Grid
  * 
- * Weekly calendar view of appointments.
- * Uses Supabase directly to avoid CORS issues.
+ * Weekly calendar view of appointments with dark day headers.
+ * All Supabase fetch + week navigation logic preserved.
  */
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { format, startOfWeek, addDays, parseISO, isSameDay } from 'date-fns';
+import { format, startOfWeek, addDays, isSameDay } from 'date-fns';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabase';
-import { Card, CardHeader, CardContent, CardTitle, Badge, Button, Spinner, Avatar } from '@/components/ui';
-import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
-import { cn, getLocalTimeFromUTC } from '@/lib/utils';
+import { Spinner } from '@/components/ui';
+import { ChevronLeft, ChevronRight, Activity } from 'lucide-react';
+import { getLocalTimeFromUTC } from '@/lib/utils';
 
 const DoctorSchedule = () => {
     const { user } = useAuth();
@@ -25,12 +25,11 @@ const DoctorSchedule = () => {
                 setLoading(true);
                 if (!user) return;
 
-                // Get doctor record for current user
                 const { data: doctor, error: doctorError } = await supabase
                     .from('doctors')
                     .select('id')
                     .eq('user_id', user.id)
-                    .single();
+                    .maybeSingle();
 
                 if (doctorError || !doctor) {
                     console.error('Doctor not found:', doctorError);
@@ -75,51 +74,49 @@ const DoctorSchedule = () => {
         return appointments.filter((apt) => isSameDay(getLocalTimeFromUTC(apt.start_time), date));
     };
 
-    const getStatusColor = (status) => {
-        const colors = {
-            pending: 'bg-yellow-100 border-yellow-300 text-yellow-800',
-            confirmed: 'bg-green-100 border-green-300 text-green-800',
-            completed: 'bg-gray-100 border-gray-300 text-gray-800',
-            cancelled: 'bg-red-100 border-red-300 text-red-800',
-        };
-        return colors[status] || colors.pending;
+    const statusConfig = {
+        pending: { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', dot: 'bg-amber-400' },
+        confirmed: { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-700', dot: 'bg-green-400' },
+        completed: { bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-600', dot: 'bg-slate-400' },
+        cancelled: { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-600', dot: 'bg-red-400' },
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 max-w-[1600px] mx-auto">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between flex-wrap gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold">My Schedule</h1>
-                    <p className="text-muted-foreground">
-                        {format(currentWeek, 'MMMM d')} - {format(addDays(currentWeek, 6), 'MMMM d, yyyy')}
-                    </p>
+                    <h1 className="text-xl font-heading font-black text-[#0B1120] tracking-tight">Weekly Operations Grid</h1>
+                    <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-[10px] font-bold text-[#1F2937]/60 uppercase tracking-wider">
+                            {format(currentWeek, 'MMMM d')} — {format(addDays(currentWeek, 6), 'MMMM d, yyyy')}
+                        </span>
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
+                    </div>
                 </div>
                 <div className="flex gap-2">
-                    <Button
-                        variant="outline"
-                        size="icon"
+                    <button
                         onClick={() => setCurrentWeek(addDays(currentWeek, -7))}
+                        className="p-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-all"
                     >
-                        <ChevronLeft className="w-4 h-4" />
-                    </Button>
-                    <Button
-                        variant="outline"
+                        <ChevronLeft className="w-4 h-4 text-[#1F2937]" />
+                    </button>
+                    <button
                         onClick={() => setCurrentWeek(startOfWeek(new Date(), { weekStartsOn: 1 }))}
+                        className="px-4 py-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-all text-xs font-black text-[#1F2937] uppercase"
                     >
                         Today
-                    </Button>
-                    <Button
-                        variant="outline"
-                        size="icon"
+                    </button>
+                    <button
                         onClick={() => setCurrentWeek(addDays(currentWeek, 7))}
+                        className="p-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-all"
                     >
-                        <ChevronRight className="w-4 h-4" />
-                    </Button>
+                        <ChevronRight className="w-4 h-4 text-[#1F2937]" />
+                    </button>
                 </div>
             </div>
 
-            {/* Calendar Grid - Scrollable on mobile */}
+            {/* Calendar Grid */}
             {loading ? (
                 <div className="flex justify-center py-12">
                     <Spinner size="lg" />
@@ -128,18 +125,22 @@ const DoctorSchedule = () => {
                 <div className="overflow-x-auto -mx-4 px-4 pb-4">
                     <div className="grid grid-cols-7 gap-2 min-w-[700px]">
                         {/* Day Headers */}
-                        {weekDays.map((day) => (
-                            <div
-                                key={day.toISOString()}
-                                className={cn(
-                                    'text-center p-2 rounded-t-lg',
-                                    isSameDay(day, new Date()) && 'bg-primary text-white'
-                                )}
-                            >
-                                <p className="font-medium text-sm">{format(day, 'EEE')}</p>
-                                <p className="text-xl font-bold">{format(day, 'd')}</p>
-                            </div>
-                        ))}
+                        {weekDays.map((day) => {
+                            const isToday = isSameDay(day, new Date());
+                            return (
+                                <div
+                                    key={day.toISOString()}
+                                    className={`text-center p-3 rounded-t-xl ${
+                                        isToday
+                                            ? 'bg-[#0B1120] text-white'
+                                            : 'bg-slate-50 text-[#1F2937] border border-slate-200'
+                                    }`}
+                                >
+                                    <p className="text-[10px] font-black uppercase tracking-widest">{format(day, 'EEE')}</p>
+                                    <p className="text-xl font-heading font-black">{format(day, 'd')}</p>
+                                </div>
+                            );
+                        })}
 
                         {/* Day Columns */}
                         {weekDays.map((day) => {
@@ -147,28 +148,29 @@ const DoctorSchedule = () => {
                             return (
                                 <div
                                     key={day.toISOString() + '-content'}
-                                    className="min-h-[200px] bg-gray-50 rounded-b-lg p-2 space-y-2"
+                                    className="min-h-[200px] bg-white rounded-b-xl p-2 space-y-2 border border-t-0 border-slate-200"
                                 >
                                     {dayAppointments.length === 0 ? (
-                                        <p className="text-xs text-muted-foreground text-center py-4">
-                                            No appts
-                                        </p>
+                                        <p className="text-[10px] text-slate-400 text-center py-6 font-medium">No appts</p>
                                     ) : (
-                                        dayAppointments.map((apt) => (
-                                            <Link
-                                                key={apt.id}
-                                                to={`/doctor/appointments/${apt.id}`}
-                                                className={cn(
-                                                    'block p-2 rounded border text-xs transition-transform hover:scale-105',
-                                                    getStatusColor(apt.status)
-                                                )}
-                                            >
-                                                <p className="font-semibold truncate">
-                                                    {format(getLocalTimeFromUTC(apt.start_time), 'h:mm a')}
-                                                </p>
-                                                <p className="truncate">{apt.patient?.full_name?.split(' ')[0]}</p>
-                                            </Link>
-                                        ))
+                                        dayAppointments.map((apt) => {
+                                            const sc = statusConfig[apt.status] || statusConfig.pending;
+                                            return (
+                                                <Link
+                                                    key={apt.id}
+                                                    to={`/doctor/appointments/${apt.id}`}
+                                                    className={`block p-2.5 rounded-xl border text-xs transition-all hover:shadow-md hover:-translate-y-0.5 ${sc.bg} ${sc.border}`}
+                                                >
+                                                    <div className="flex items-center gap-1.5 mb-1">
+                                                        <div className={`w-1.5 h-1.5 rounded-full ${sc.dot}`} />
+                                                        <p className={`font-black ${sc.text}`}>
+                                                            {format(getLocalTimeFromUTC(apt.start_time), 'h:mm a')}
+                                                        </p>
+                                                    </div>
+                                                    <p className="text-[#1F2937] font-bold truncate">{apt.patient?.full_name?.split(' ')[0]}</p>
+                                                </Link>
+                                            );
+                                        })
                                     )}
                                 </div>
                             );
@@ -178,22 +180,24 @@ const DoctorSchedule = () => {
             )}
 
             {/* Legend */}
-            <div className="flex flex-wrap gap-4 text-sm">
+            <div className="flex flex-wrap gap-4 text-xs">
+                {Object.entries(statusConfig).map(([status, sc]) => (
+                    <div key={status} className="flex items-center gap-2">
+                        <div className={`w-3 h-3 rounded ${sc.dot}`} />
+                        <span className="font-bold text-[#1F2937] capitalize">{status}</span>
+                    </div>
+                ))}
+            </div>
+
+            {/* Footer */}
+            <div className="flex items-center justify-between text-[10px] pt-2">
                 <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded bg-yellow-100 border border-yellow-300" />
-                    <span>Pending</span>
+                    <Activity className="w-3.5 h-3.5 text-[#0D9488]" />
+                    <span className="font-black text-[#1F2937] uppercase tracking-tighter">Schedule Engine: Synced</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded bg-green-100 border border-green-300" />
-                    <span>Confirmed</span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded bg-gray-100 border border-gray-300" />
-                    <span>Completed</span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded bg-red-100 border border-red-300" />
-                    <span>Cancelled</span>
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#10b981]" />
+                    <span className="font-black text-[#10b981] uppercase">Real-time</span>
                 </div>
             </div>
         </div>

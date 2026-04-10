@@ -1,0 +1,11 @@
+node_modules
+.git
+.planning
+hackathon-zips
+ml-service
+server
+docs
+e2e
+tests
+scripts
+supabase

@@ -2,8 +2,8 @@ import { getLocalTimeFromUTC } from '@/lib/utils';
 /**
  * DoctorDashboard — Niramaya Command Center
  * 
- * Priority dispatch queue with real-time vitals overlay,
- * color-coded triage, and clinical action buttons.
+ * Priority Dispatch Queue with real-time vitals overlay,
+ * color-coded triage table, and clinical action buttons.
  * Preserves all existing Supabase data fetching.
  */
 import { useState, useEffect } from 'react';
@@ -12,10 +12,10 @@ import { format, startOfDay, endOfDay } from 'date-fns';
 import { useAuth } from '@/hooks/useAuth';
 import { useNiramaya } from '@/hooks/useNiramaya';
 import { supabase } from '@/lib/supabase';
-import { Badge, Spinner, Avatar } from '@/components/ui';
+import { Spinner } from '@/components/ui';
 import {
-    Calendar, Clock, Users, CheckCircle, AlertCircle, ChevronRight,
-    Activity, Shield, Zap, ArrowRight, Heart, Droplets, AlertTriangle,
+    AlertCircle, Heart, Droplets, Activity, Clock,
+    Users, ChevronRight, Zap, ArrowRight, Shield,
 } from 'lucide-react';
 
 const DoctorDashboard = () => {
@@ -34,9 +34,9 @@ const DoctorDashboard = () => {
                     .from('doctors')
                     .select('id')
                     .eq('user_id', user.id)
-                    .single();
+                    .maybeSingle();
 
-                if (doctorError || !doctor) throw new Error('Doctor profile not found');
+                if (doctorError || !doctor) throw new Error('Doctor profile not found. Please contact admin to set up your doctor profile.');
 
                 const today = new Date();
                 const todayStart = startOfDay(today).toISOString();
@@ -104,141 +104,172 @@ const DoctorDashboard = () => {
 
     const stats = summary?.stats || {};
     const todayAppointments = summary?.todayAppointments || [];
+    const criticalCount = stats.pending || 0;
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 max-w-[1600px] mx-auto">
             {/* Command Center Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-heading font-black text-[#1A2B48]">Command Center</h1>
-                    <p className="text-sm text-slate-500 mt-1">Real-time clinical operations dashboard</p>
+                    <h1 className="text-xl font-heading font-black text-[#0B1120] tracking-tight">Priority Dispatch Queue</h1>
+                    <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-[10px] font-bold text-[#1F2937]/60 uppercase tracking-wider">Clinical Triage Feed</span>
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
+                    </div>
                 </div>
                 <div className="flex items-center gap-3">
-                    <div className="hidden sm:flex items-center gap-2 bg-[#008080]/5 border border-[#008080]/10 px-4 py-2 rounded-xl">
-                        <span className="relative flex h-2 w-2">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#008080] opacity-75" />
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#008080]" />
-                        </span>
-                        <span className="text-xs font-bold text-[#008080]">System Online</span>
-                    </div>
+                    {criticalCount > 0 && (
+                        <div className="hidden sm:flex items-center gap-2 bg-[#0B1120] px-3 py-1.5 rounded-lg border border-white/10">
+                            <AlertCircle className="w-4 h-4 text-[#ef4444] animate-pulse" />
+                            <span className="text-[10px] font-black text-white uppercase tracking-wider">{criticalCount} Pending</span>
+                        </div>
+                    )}
                 </div>
             </div>
 
-            {/* Stats Grid */}
-            <div className="grid sm:grid-cols-4 gap-4">
-                <Link to="/doctor/appointments?filter=today" className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center">
-                        <Calendar className="w-6 h-6 text-blue-600" />
+            {/* Stats Row */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <Link to="/doctor/appointments?filter=today" className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center border border-blue-100">
+                        <Zap className="w-5 h-5 text-blue-600" />
                     </div>
                     <div>
-                        <p className="text-2xl font-heading font-black text-[#1A2B48]">{stats.todayTotal || 0}</p>
-                        <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Today</p>
+                        <p className="text-2xl font-heading font-black text-[#0B1120]">{stats.todayTotal || 0}</p>
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Today</p>
                     </div>
                 </Link>
 
-                <Link to="/doctor/appointments?filter=pending" className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center">
-                        <Clock className="w-6 h-6 text-amber-600" />
+                <Link to="/doctor/appointments?filter=pending" className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center border border-amber-100">
+                        <Clock className="w-5 h-5 text-amber-600" />
                     </div>
                     <div>
-                        <p className="text-2xl font-heading font-black text-[#1A2B48]">{stats.pending || 0}</p>
-                        <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Pending</p>
+                        <p className="text-2xl font-heading font-black text-[#0B1120]">{stats.pending || 0}</p>
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Pending</p>
                     </div>
                 </Link>
 
-                <Link to="/doctor/appointments?filter=upcoming" className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center">
-                        <CheckCircle className="w-6 h-6 text-green-600" />
+                <Link to="/doctor/appointments?filter=upcoming" className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center border border-green-100">
+                        <Users className="w-5 h-5 text-green-600" />
                     </div>
                     <div>
-                        <p className="text-2xl font-heading font-black text-[#1A2B48]">{stats.upcoming || 0}</p>
-                        <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Upcoming</p>
+                        <p className="text-2xl font-heading font-black text-[#0B1120]">{stats.upcoming || 0}</p>
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Upcoming</p>
                     </div>
                 </Link>
 
                 {/* Live Risk Overview */}
-                <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${riskHex}15` }}>
-                        <Activity className="w-6 h-6" style={{ color: riskHex }} />
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ backgroundColor: `${riskHex}10`, borderColor: `${riskHex}30` }}>
+                        <Activity className="w-5 h-5" style={{ color: riskHex }} />
                     </div>
                     <div>
                         <p className="text-2xl font-heading font-black" style={{ color: riskHex }}>{riskScore}</p>
-                        <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Risk Index</p>
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Risk Index</p>
                     </div>
                 </div>
             </div>
 
-            {/* Today's Appointments — Priority Queue */}
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-                <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
+            {/* Priority Queue Table */}
+            <div className="bg-white rounded-[16px] shadow-xl shadow-slate-200/40 border border-slate-200 overflow-hidden">
+                <div className="px-5 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <Zap className="w-5 h-5 text-[#008080]" />
-                        <h2 className="text-lg font-heading font-bold text-[#1A2B48]">Priority Dispatch Queue</h2>
-                        <Badge variant="outline" className="text-[10px] font-black tracking-widest uppercase">
+                        <Zap className="w-4 h-4 text-[#0D9488]" />
+                        <h2 className="text-sm font-heading font-black text-[#1F2937] uppercase tracking-widest">Today's Queue</h2>
+                        <span className="px-2 py-0.5 bg-[#0D9488]/10 text-[#0D9488] text-[9px] font-black rounded uppercase border border-[#0D9488]/20">
                             {todayAppointments.length} Active
-                        </Badge>
+                        </span>
                     </div>
-                    <Link to="/doctor/appointments" className="flex items-center gap-1 text-xs font-bold text-[#008080] hover:text-[#00d2c1] transition-colors">
+                    <Link to="/doctor/appointments" className="flex items-center gap-1 text-xs font-bold text-[#0D9488] hover:text-[#0b7a6f] transition-colors">
                         View All <ChevronRight className="w-4 h-4" />
                     </Link>
                 </div>
 
                 {todayAppointments.length > 0 ? (
                     <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
+                        <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="bg-slate-50">
-                                    <th className="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Patient</th>
-                                    <th className="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Time</th>
-                                    <th className="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Reason</th>
-                                    <th className="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
-                                    <th className="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Live Vitals</th>
-                                    <th className="px-6 py-3 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Action</th>
+                                <tr className="bg-slate-50 border-b border-slate-200">
+                                    <th className="px-5 py-3 text-[10px] font-black text-[#1F2937] uppercase tracking-widest">Patient Details</th>
+                                    <th className="px-5 py-3 text-[10px] font-black text-[#1F2937] uppercase tracking-widest">Time</th>
+                                    <th className="px-5 py-3 text-[10px] font-black text-[#1F2937] uppercase tracking-widest">Reason</th>
+                                    <th className="px-5 py-3 text-[10px] font-black text-[#1F2937] uppercase tracking-widest">Heart Rate</th>
+                                    <th className="px-5 py-3 text-[10px] font-black text-[#1F2937] uppercase tracking-widest">SpO2</th>
+                                    <th className="px-5 py-3 text-[10px] font-black text-[#1F2937] uppercase tracking-widest">Risk Vector</th>
+                                    <th className="px-5 py-3 text-[10px] font-black text-[#1F2937] uppercase tracking-widest">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-50">
-                                {todayAppointments.map((apt) => (
-                                    <tr key={apt.id} className="hover:bg-slate-50 transition-colors">
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-3">
-                                                <Avatar name={apt.patient?.full_name} size="sm" />
-                                                <div>
-                                                    <p className="font-bold text-[#1A2B48]">{apt.patient?.full_name}</p>
-                                                    <p className="text-xs text-slate-400">{apt.patient?.email}</p>
+                            <tbody className="divide-y divide-slate-100">
+                                {todayAppointments.map((apt, idx) => {
+                                    const isUrgent = apt.status === 'pending';
+                                    const riskVal = riskScore || 0;
+                                    return (
+                                        <tr key={apt.id} className={`group transition-all relative ${isUrgent ? 'bg-red-50/30' : 'hover:bg-slate-50'}`}>
+                                            <td className={`px-5 py-4 ${isUrgent ? 'border-l-4 border-[#ef4444]' : 'border-l-4 border-transparent'}`}>
+                                                <div className="flex items-center gap-3">
+                                                    <div className="relative shrink-0">
+                                                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold border-2 ${
+                                                            isUrgent ? 'bg-red-50 text-red-600 border-red-200' : 'bg-slate-100 text-[#0B1120] border-slate-200'
+                                                        }`}>
+                                                            {apt.patient?.full_name?.charAt(0) || 'P'}
+                                                        </div>
+                                                        {isUrgent && (
+                                                            <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#ef4444] rounded-full border-2 border-white animate-pulse" />
+                                                        )}
+                                                    </div>
+                                                    <div>
+                                                        <p className={`font-heading font-bold text-sm ${isUrgent ? 'text-[#ef4444]' : 'text-[#1F2937]'}`}>
+                                                            {apt.patient?.full_name}
+                                                        </p>
+                                                        <p className="text-[9px] text-[#1F2937]/50 font-bold uppercase tracking-tight">
+                                                            {apt.patient?.email}
+                                                        </p>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 font-mono text-xs text-[#1A2B48] font-bold">
-                                            {format(getLocalTimeFromUTC(apt.start_time), 'h:mm a')}
-                                        </td>
-                                        <td className="px-6 py-4 text-slate-600 text-sm max-w-[200px] truncate">
-                                            {apt.reason || 'General consultation'}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <Badge variant={apt.status === 'confirmed' ? 'success' : apt.status === 'pending' ? 'warning' : 'default'}>
-                                                {apt.status}
-                                            </Badge>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-3 text-xs">
-                                                <span className="flex items-center gap-1 text-red-500">
-                                                    <Heart className="w-3 h-3" /> {vitals?.hr || '--'}
+                                            </td>
+                                            <td className="px-5 py-4 text-sm font-bold text-[#1F2937] font-mono">
+                                                {format(getLocalTimeFromUTC(apt.start_time), 'h:mm a')}
+                                            </td>
+                                            <td className="px-5 py-4 text-sm text-[#1F2937]/70 max-w-[180px] truncate">
+                                                {apt.reason || 'General consultation'}
+                                            </td>
+                                            <td className="px-5 py-4">
+                                                <span className="flex items-center gap-1 text-sm font-bold text-red-500">
+                                                    <Heart className="w-3.5 h-3.5" /> {vitals?.hr || '--'}
                                                 </span>
-                                                <span className="flex items-center gap-1 text-cyan-500">
-                                                    <Droplets className="w-3 h-3" /> {vitals?.spo2 || '--'}%
+                                            </td>
+                                            <td className="px-5 py-4">
+                                                <span className="flex items-center gap-1 text-sm font-bold text-cyan-500">
+                                                    <Droplets className="w-3.5 h-3.5" /> {vitals?.spo2 || '--'}%
                                                 </span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <Link
-                                                to={`/doctor/appointments/${apt.id}`}
-                                                className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#008080]/10 text-[#008080] text-xs font-bold rounded-lg hover:bg-[#008080] hover:text-white transition-all"
-                                            >
-                                                Intervene <ArrowRight className="w-3 h-3" />
-                                            </Link>
-                                        </td>
-                                    </tr>
-                                ))}
+                                            </td>
+                                            <td className="px-5 py-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+                                                        <div
+                                                            className="h-full rounded-full transition-all duration-500"
+                                                            style={{
+                                                                width: `${Math.min(riskVal, 100)}%`,
+                                                                backgroundColor: riskHex,
+                                                                boxShadow: riskVal > 70 ? `0 0 8px ${riskHex}` : 'none',
+                                                            }}
+                                                        />
+                                                    </div>
+                                                    <span className="text-xs font-black" style={{ color: riskHex }}>{riskVal}%</span>
+                                                </div>
+                                            </td>
+                                            <td className="px-5 py-4">
+                                                <Link
+                                                    to={`/doctor/appointments/${apt.id}`}
+                                                    className="px-3 py-2 bg-[#0D9488] text-white text-[10px] font-black rounded-lg shadow-md hover:brightness-110 transition-all uppercase tracking-wider inline-flex items-center gap-1"
+                                                >
+                                                    Intervene <ArrowRight className="w-3 h-3" />
+                                                </Link>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
                             </tbody>
                         </table>
                     </div>
@@ -246,47 +277,49 @@ const DoctorDashboard = () => {
                     <div className="p-10 text-center text-slate-400">
                         <Users className="w-12 h-12 mx-auto mb-3 text-slate-300" />
                         <p className="font-bold text-sm">No appointments scheduled for today</p>
+                        <p className="text-xs text-slate-400 mt-1">Queue is clear — no active dispatches</p>
                     </div>
                 )}
             </div>
 
             {/* Quick Actions */}
             <div className="grid sm:grid-cols-2 gap-4">
-                <Link to="/doctor/schedule" className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex items-center justify-between group">
+                <Link to="/doctor/schedule" className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex items-center justify-between group">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-[#008080]/10 flex items-center justify-center group-hover:bg-[#008080] transition-colors">
-                            <Calendar className="w-5 h-5 text-[#008080] group-hover:text-white transition-colors" />
+                        <div className="w-12 h-12 rounded-xl bg-[#0D9488]/10 flex items-center justify-center group-hover:bg-[#0D9488] transition-colors border border-[#0D9488]/20">
+                            <Zap className="w-5 h-5 text-[#0D9488] group-hover:text-white transition-colors" />
                         </div>
                         <div>
-                            <p className="font-bold text-sm text-[#1A2B48]">View Schedule</p>
+                            <p className="font-bold text-sm text-[#0B1120]">View Schedule</p>
                             <p className="text-xs text-slate-500">See your weekly calendar</p>
                         </div>
                     </div>
-                    <ArrowRight className="w-5 h-5 text-slate-400 group-hover:text-[#008080] transition-colors" />
+                    <ArrowRight className="w-5 h-5 text-slate-400 group-hover:text-[#0D9488] transition-colors" />
                 </Link>
-                <Link to="/doctor/availability" className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex items-center justify-between group">
+                <Link to="/doctor/availability" className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex items-center justify-between group">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center group-hover:bg-green-500 transition-colors">
+                        <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center group-hover:bg-green-500 transition-colors border border-green-100">
                             <Clock className="w-5 h-5 text-green-600 group-hover:text-white transition-colors" />
                         </div>
                         <div>
-                            <p className="font-bold text-sm text-[#1A2B48]">Manage Availability</p>
-                            <p className="text-xs text-slate-500">Set your working hours</p>
+                            <p className="font-bold text-sm text-[#0B1120]">Shift Planner</p>
+                            <p className="text-xs text-slate-500">Configure availability</p>
                         </div>
                     </div>
                     <ArrowRight className="w-5 h-5 text-slate-400 group-hover:text-green-500 transition-colors" />
                 </Link>
             </div>
 
-            {/* Terminal Footer */}
+            {/* Footer */}
             <div className="flex justify-between items-center text-[10px] font-mono text-slate-400 pt-2">
-                <span className="flex items-center gap-1">
-                    <span className="w-1 h-1 bg-[#008080] rounded-full" />
-                    ENGINE: NiramayaCore_v5 • NEWS2 Active
+                <span className="flex items-center gap-2">
+                    <Activity className="w-3.5 h-3.5 text-[#0D9488]" />
+                    <span className="font-black text-[#1F2937] uppercase">Queue Pressure: Normal</span>
                 </span>
-                <span className="flex items-center gap-1">
-                    <Shield className="w-3 h-3 text-[#008080]" />
-                    HIPAA Compliant • TLS 1.3
+                <span className="flex items-center gap-2">
+                    <Shield className="w-3 h-3 text-[#0D9488]" />
+                    <span className="font-black text-[#0D9488] uppercase">Real-time Telemetry Active</span>
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
                 </span>
             </div>
         </div>
