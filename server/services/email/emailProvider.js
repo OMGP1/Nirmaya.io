@@ -69,12 +69,36 @@ async function sendEmailWithResend({ to, subject, html, text }) {
     }
 
     try {
+        // Resend Sandbox Mode Fix: In testing mode (using onboarding@resend.dev), 
+        // Resend ONLY allows sending to the registered account email.
+        // We intercept the recipient and reroute to the verified email to prevent silent failures,
+        // while noting the original intended recipient in the subject/body.
+        let actualTo = Array.isArray(to) ? to : [to];
+        let actualSubject = subject;
+        let actualHtml = html;
+        let actualText = text;
+        
+        if (sender.email === 'onboarding@resend.dev') {
+            const originalRecipient = actualTo.join(', ');
+            actualTo = ['omparabomgp123@gmail.com'];
+            actualSubject = `[TEST MODE -> ${originalRecipient}] ${subject}`;
+            
+            const warningHtml = `<div style="background-color: #fff3cd; color: #856404; padding: 10px; margin-bottom: 15px; border: 1px solid #ffeeba; border-radius: 4px; font-family: sans-serif;">
+                <strong>⚠️ TEST MODE ACTIVE:</strong> This email was originally intended for <strong>${originalRecipient}</strong>, 
+                but was routed to the admin email because the Resend domain is not verified yet.
+            </div>`;
+            actualHtml = warningHtml + html;
+            actualText = `[TEST MODE - Intended for ${originalRecipient}]\n\n` + text;
+            
+            logger.info(`Rerouting email intended for ${originalRecipient} to verified admin email due to Sandbox mode.`);
+        }
+
         const result = await client.emails.send({
             from: sender.formatted,
-            to: Array.isArray(to) ? to : [to],
-            subject,
-            html,
-            text,
+            to: actualTo,
+            subject: actualSubject,
+            html: actualHtml,
+            text: actualText,
         });
 
         if (result.error) {
