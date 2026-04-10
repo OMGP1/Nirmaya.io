@@ -56,13 +56,7 @@ export const AuthProvider = ({ children }) => {
     const fetchProfile = async (userId) => {
         console.log('🔍 Fetching profile for:', userId); // DEBUG 1
 
-        // Create a timeout promise to prevent infinite loading
-        const timeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => reject(new Error('Profile fetch timeout - RLS may be blocking')), 15000);
-        });
-
-        // Create the actual fetch promise
-        const fetchPromise = (async () => {
+        try {
             const { data, error } = await supabase
                 .from('users')
                 .select('*')
@@ -75,7 +69,6 @@ export const AuthProvider = ({ children }) => {
                 // PGRST116 = "Row not found" - this is expected for legacy users
                 if (error.code === 'PGRST116') {
                     console.warn('⚠️ User authenticated but has no profile row - using default');
-                    // Return a 'ghost' profile so the app loads
                     return {
                         id: userId,
                         role: 'patient',
@@ -83,11 +76,9 @@ export const AuthProvider = ({ children }) => {
                         email: null,
                     };
                 }
-                console.error('❌ Error fetching profile:', error);
                 throw error;
             }
 
-            // Handle edge case where data is null
             if (!data) {
                 console.warn('⚠️ Profile query returned no data');
                 return {
@@ -100,14 +91,9 @@ export const AuthProvider = ({ children }) => {
 
             console.log('✅ Profile loaded successfully:', data.full_name, 'Role:', data.role); // DEBUG 3
             return data;
-        })();
-
-        try {
-            // Race between fetch and timeout
-            return await Promise.race([fetchPromise, timeoutPromise]);
         } catch (err) {
             console.error('💥 Profile fetch error:', err.message);
-            console.warn('⚠️ Using fallback profile - please check RLS policies on users table');
+            console.warn('⚠️ Using fallback profile - please check network or RLS policies');
             // Return fallback profile with PATIENT role (not admin) to prevent privilege escalation
             return {
                 id: userId,
