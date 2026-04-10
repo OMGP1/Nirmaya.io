@@ -31,10 +31,10 @@ const Settings = () => {
     const inputClasses = "w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-[#1A2B48] placeholder:text-slate-400 focus:ring-2 focus:ring-[#008080] focus:border-transparent outline-none transition-all";
 
     return (
-        <div className="min-h-screen w-full bg-slate-50 flex flex-row relative overflow-hidden">
+        <div className="h-screen w-full bg-slate-50 flex flex-row overflow-hidden relative">
             <PatientSidebar />
             
-            <main className="flex-1 flex flex-col min-h-screen relative overflow-y-auto w-full">
+            <main className="flex-1 flex flex-col h-screen overflow-y-auto relative w-full">
                 {/* Header / Banner */}
                 <div className="bg-white border-b border-slate-200 px-6 py-8 sm:px-12 flex flex-col space-y-4">
                     <div className="flex items-center gap-3 mb-2">

@@ -62,7 +62,7 @@ const BookAppointmentWrapper = () => {
     const showSidebar = isAuthenticated && isPatient;
 
     const content = (
-        <div className="flex-1 flex flex-col min-h-screen relative overflow-y-auto w-full">
+        <div className="flex-1 flex flex-col h-screen relative overflow-y-auto w-full">
             <div className="bg-[#1A2B48] px-6 py-12 sm:px-12 flex flex-col items-center justify-center text-center">
                 <h1 className="text-3xl sm:text-4xl font-heading font-black text-white mb-2">
                     Book Clinical Appointment
@@ -72,7 +72,7 @@ const BookAppointmentWrapper = () => {
                 </p>
             </div>
             
-            <div className="p-4 sm:p-8 -mt-8 mx-auto w-full max-w-5xl relative z-10 flex-1">
+            <div className="p-4 sm:p-8 -mt-8 mx-auto w-full max-w-5xl relative z-10 flex-1 shrink-0">
                 <BookingContent />
             </div>
 
@@ -81,7 +81,7 @@ const BookAppointmentWrapper = () => {
     );
 
     return (
-        <div className={`min-h-screen w-full bg-slate-50 flex ${showSidebar ? 'flex-row' : 'flex-col'}`}>
+        <div className={`h-screen overflow-hidden w-full bg-slate-50 flex ${showSidebar ? 'flex-row' : 'flex-col'}`}>
             {showSidebar ? (
                 <PatientSidebar />
             ) : (

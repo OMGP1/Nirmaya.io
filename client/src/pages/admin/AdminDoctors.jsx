@@ -1,12 +1,13 @@
 /**
- * Admin Doctors Page
+ * Admin Doctors Page — Niramaya System Engine
  * 
  * Manage doctors - promote users to doctors.
+ * All Supabase backend logic preserved.
  */
 import { useState, useEffect } from 'react';
-import { Card, Spinner, Badge, Button, Input, Avatar, Modal } from '@/components/ui';
+import { Spinner, Modal } from '@/components/ui';
 import { supabase } from '@/lib/supabase';
-import { Search, Plus, Edit2, UserPlus, Mail, Building2 } from 'lucide-react';
+import { Search, UserPlus, Mail, Building2, Users } from 'lucide-react';
 
 const AdminDoctors = () => {
     const [doctors, setDoctors] = useState([]);
@@ -156,33 +157,40 @@ const AdminDoctors = () => {
         )
         : doctors;
 
+    const inputClasses = "w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-[#0B1120] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0D9488] focus:border-transparent transition-all";
+
     return (
         <div>
-            <div className="flex items-center justify-between mb-8 animate-slide-up">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-8">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Doctors</h1>
-                    <p className="text-gray-500 mt-1">Manage doctor profiles</p>
+                    <div className="flex items-center gap-2 mb-1">
+                        <Users className="w-4 h-4 text-[#0D9488]" />
+                        <span className="text-[10px] font-black text-[#0D9488] uppercase tracking-widest">Personnel Registry</span>
+                    </div>
+                    <h1 className="text-2xl font-heading font-black text-[#0B1120]">Doctors</h1>
+                    <p className="text-sm text-slate-500 mt-1">Manage clinical specialist profiles and credentials</p>
                 </div>
-                <Button
-                    leftIcon={<UserPlus className="w-4 h-4" />}
-                    onClick={() => {
-                        resetForm();
-                        setShowModal(true);
-                    }}
+                <button
+                    onClick={() => { resetForm(); setShowModal(true); }}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-[#0B1120] text-white text-[10px] font-black rounded-lg uppercase tracking-widest shadow-md hover:brightness-110 transition-all"
                 >
-                    Add Doctor
-                </Button>
+                    <UserPlus className="w-4 h-4" /> Add Doctor
+                </button>
             </div>
 
             {/* Search */}
-            <div className="mb-6">
-                <Input
-                    placeholder="Search by name or specialization..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    leftIcon={<Search className="w-5 h-5" />}
-                    className="max-w-md"
-                />
+            <div className="mb-6 max-w-md">
+                <div className="relative">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <input
+                        type="text"
+                        placeholder="Search by name or specialization..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className={`${inputClasses} pl-11`}
+                    />
+                </div>
             </div>
 
             {/* Doctors Grid */}
@@ -191,59 +199,64 @@ const AdminDoctors = () => {
                     <Spinner size="lg" />
                 </div>
             ) : filteredDoctors.length === 0 ? (
-                <Card className="p-8 text-center text-gray-500">
+                <div className="bg-white rounded-xl border border-slate-200 p-8 text-center text-slate-500 shadow-sm">
                     No doctors found.
-                </Card>
+                </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredDoctors.map((doctor) => (
-                        <Card key={doctor.id} className="p-6">
+                        <div key={doctor.id} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all">
                             <div className="flex items-start justify-between mb-4">
                                 <div className="flex items-center gap-3">
-                                    <Avatar name={doctor.user?.full_name} size="lg" />
+                                    <div className="w-12 h-12 rounded-xl bg-[#0D9488]/10 flex items-center justify-center border border-[#0D9488]/20 text-[#0D9488] font-bold text-sm">
+                                        {doctor.user?.full_name?.charAt(0) || 'D'}
+                                    </div>
                                     <div>
-                                        <h3 className="font-semibold text-gray-900">
+                                        <h3 className="font-heading font-bold text-[#0B1120]">
                                             Dr. {doctor.user?.full_name}
                                         </h3>
-                                        <p className="text-sm text-gray-500">
+                                        <p className="text-xs text-slate-500 font-medium">
                                             {doctor.specialization}
                                         </p>
                                     </div>
                                 </div>
-                                <Badge variant={doctor.is_active ? 'success' : 'danger'}>
+                                <span className={`px-2 py-1 text-[9px] font-black rounded uppercase ${doctor.is_active ? 'bg-[#0D9488] text-white' : 'bg-slate-200 text-slate-500'}`}>
                                     {doctor.is_active ? 'Active' : 'Inactive'}
-                                </Badge>
+                                </span>
                             </div>
 
-                            <div className="space-y-2 text-sm text-gray-600 mb-4">
+                            <div className="space-y-2 text-sm text-slate-600 mb-4">
                                 <p className="flex items-center gap-2">
-                                    <Building2 className="w-4 h-4 text-gray-400" />
-                                    {doctor.department?.name}
+                                    <Building2 className="w-4 h-4 text-slate-400" />
+                                    <span className="text-xs">{doctor.department?.name}</span>
                                 </p>
                                 <p className="flex items-center gap-2">
-                                    <Mail className="w-4 h-4 text-gray-400" />
-                                    {doctor.user?.email}
+                                    <Mail className="w-4 h-4 text-slate-400" />
+                                    <span className="text-xs truncate">{doctor.user?.email}</span>
                                 </p>
                             </div>
 
-                            <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                            <div className="flex items-center justify-between pt-4 border-t border-slate-100">
                                 <div>
-                                    <p className="text-lg font-semibold text-gray-900">
+                                    <p className="text-lg font-heading font-black text-[#0B1120]">
                                         ₹{doctor.consultation_fee}
                                     </p>
-                                    <p className="text-xs text-gray-500">
+                                    <p className="text-[10px] text-slate-500 font-bold uppercase">
                                         {doctor.experience_years}y experience
                                     </p>
                                 </div>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
+                                <button
                                     onClick={() => toggleActive(doctor)}
+                                    className={`px-4 py-1.5 text-[10px] font-black rounded-lg uppercase tracking-widest border transition-all ${
+                                        doctor.is_active
+                                            ? 'border-red-200 text-red-600 hover:bg-red-50'
+                                            : 'border-[#0D9488] text-[#0D9488] hover:bg-[#0D9488]/10'
+                                    }`}
                                 >
                                     {doctor.is_active ? 'Deactivate' : 'Activate'}
-                                </Button>
+                                </button>
                             </div>
-                        </Card>
+                        </div>
                     ))}
                 </div>
             )}
@@ -257,56 +270,53 @@ const AdminDoctors = () => {
                     size="md"
                 >
                     <div className="space-y-4">
-                        <p className="text-sm text-gray-600 mb-4">
+                        <p className="text-sm text-slate-600 mb-4">
                             Search for an existing user by email to promote them to doctor.
                         </p>
 
                         {/* User Search */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                            <label className="block text-[10px] font-black text-slate-500 uppercase mb-2">
                                 User Email
                             </label>
                             <div className="flex gap-2">
-                                <Input
+                                <input
                                     type="email"
                                     value={formData.email}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, email: e.target.value })
-                                    }
+                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                     placeholder="doctor@example.com"
+                                    className={inputClasses}
                                 />
-                                <Button
-                                    variant="outline"
+                                <button
                                     onClick={searchUser}
-                                    isLoading={searchingUser}
+                                    disabled={searchingUser}
+                                    className="px-4 py-2 border border-slate-200 text-sm font-bold text-[#0B1120] rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap"
                                 >
-                                    Search
-                                </Button>
+                                    {searchingUser ? 'Searching...' : 'Search'}
+                                </button>
                             </div>
                         </div>
 
                         {formError && (
-                            <p className="text-sm text-red-600">{formError}</p>
+                            <p className="text-sm text-red-600 font-medium">{formError}</p>
                         )}
 
                         {foundUser && (
                             <>
-                                <div className="bg-green-50 p-3 rounded-lg">
-                                    <p className="text-sm text-green-800">
+                                <div className="bg-[#0D9488]/10 border border-[#0D9488]/20 p-3 rounded-lg">
+                                    <p className="text-sm text-[#0D9488] font-bold">
                                         Found: <strong>{foundUser.full_name}</strong> ({foundUser.email})
                                     </p>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label className="block text-[10px] font-black text-slate-500 uppercase mb-2">
                                         Department
                                     </label>
                                     <select
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                                        className={inputClasses}
                                         value={formData.department_id}
-                                        onChange={(e) =>
-                                            setFormData({ ...formData, department_id: e.target.value })
-                                        }
+                                        onChange={(e) => setFormData({ ...formData, department_id: e.target.value })}
                                     >
                                         <option value="">Select Department</option>
                                         {departments.map((dept) => (
@@ -317,41 +327,51 @@ const AdminDoctors = () => {
                                     </select>
                                 </div>
 
-                                <Input
-                                    label="Specialization"
-                                    value={formData.specialization}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, specialization: e.target.value })
-                                    }
-                                    placeholder="e.g., Cardiologist"
-                                />
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    <Input
-                                        label="Experience (years)"
-                                        type="number"
-                                        value={formData.experience_years}
-                                        onChange={(e) =>
-                                            setFormData({ ...formData, experience_years: e.target.value })
-                                        }
-                                    />
-                                    <Input
-                                        label="Consultation Fee (₹)"
-                                        type="number"
-                                        value={formData.consultation_fee}
-                                        onChange={(e) =>
-                                            setFormData({ ...formData, consultation_fee: e.target.value })
-                                        }
+                                <div>
+                                    <label className="block text-[10px] font-black text-slate-500 uppercase mb-2">Specialization</label>
+                                    <input
+                                        type="text"
+                                        value={formData.specialization}
+                                        onChange={(e) => setFormData({ ...formData, specialization: e.target.value })}
+                                        placeholder="e.g., Cardiologist"
+                                        className={inputClasses}
                                     />
                                 </div>
 
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-[10px] font-black text-slate-500 uppercase mb-2">Experience (years)</label>
+                                        <input
+                                            type="number"
+                                            value={formData.experience_years}
+                                            onChange={(e) => setFormData({ ...formData, experience_years: e.target.value })}
+                                            className={inputClasses}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-black text-slate-500 uppercase mb-2">Fee (₹)</label>
+                                        <input
+                                            type="number"
+                                            value={formData.consultation_fee}
+                                            onChange={(e) => setFormData({ ...formData, consultation_fee: e.target.value })}
+                                            className={inputClasses}
+                                        />
+                                    </div>
+                                </div>
+
                                 <div className="flex justify-end gap-3 pt-4">
-                                    <Button variant="outline" onClick={() => setShowModal(false)}>
+                                    <button
+                                        onClick={() => setShowModal(false)}
+                                        className="px-4 py-2 border border-slate-200 text-sm font-bold text-slate-600 rounded-lg hover:bg-slate-50 transition-colors"
+                                    >
                                         Cancel
-                                    </Button>
-                                    <Button onClick={promoteToDoctor}>
+                                    </button>
+                                    <button
+                                        onClick={promoteToDoctor}
+                                        className="px-5 py-2 bg-[#0B1120] text-white text-sm font-bold rounded-lg hover:brightness-110 transition-all"
+                                    >
                                         Promote to Doctor
-                                    </Button>
+                                    </button>
                                 </div>
                             </>
                         )}

@@ -27,9 +27,9 @@ const CareCircle = () => {
   const inputClasses = "w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-[#1A2B48] placeholder:text-slate-300 focus:ring-2 focus:ring-[#008080] focus:border-transparent outline-none transition-all";
 
   return (
-    <div className="min-h-screen w-full bg-slate-50 flex flex-row">
+    <div className="h-screen w-full bg-slate-50 flex flex-row overflow-hidden relative">
       <PatientSidebar />
-      <main className="flex-1 flex flex-col min-h-screen">
+      <main className="flex-1 flex flex-col h-screen overflow-y-auto relative">
         <header className="bg-white border-b border-slate-200 px-8 py-6 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 bg-[#008080]/10 rounded-xl flex items-center justify-center">

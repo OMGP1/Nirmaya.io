@@ -60,7 +60,7 @@ const Doctors = () => {
     const showSidebar = isAuthenticated && isPatient;
 
     const content = (
-        <div className="flex-1 flex flex-col min-h-screen relative overflow-y-auto">
+        <div className="flex-1 flex flex-col h-screen relative overflow-y-auto">
             {/* Header / Banner */}
             <div className="bg-white border-b border-slate-200 px-6 py-8 sm:px-12 flex flex-col space-y-2">
                 <div className="flex items-center gap-3 mb-2">
@@ -211,7 +211,7 @@ const Doctors = () => {
     // If unauthenticated or a different role, wrap in standard App layout with top Header
     // If logged in patient, wrap in row with PatientSidebar
     return (
-        <div className={`min-h-screen w-full bg-slate-50 flex ${showSidebar ? 'flex-row' : 'flex-col'}`}>
+        <div className={`h-screen overflow-hidden w-full bg-slate-50 flex ${showSidebar ? 'flex-row' : 'flex-col'}`}>
             {showSidebar ? (
                 <PatientSidebar />
             ) : (

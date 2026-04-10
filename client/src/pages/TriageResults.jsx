@@ -36,9 +36,9 @@ const TriageResults = () => {
   const confPercent = Math.round(result.confidence * 100);
 
   return (
-    <div className="min-h-screen w-full bg-slate-50 flex flex-row">
+    <div className="h-screen w-full bg-slate-50 flex flex-row overflow-hidden relative">
       <PatientSidebar />
-      <main className="flex-1 flex flex-col min-h-screen">
+      <main className="flex-1 flex flex-col h-screen overflow-y-auto relative">
         <header className="bg-white border-b border-slate-200 px-8 py-6 flex items-center gap-4">
           <button onClick={() => navigate(-1)} className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center hover:bg-slate-200 transition-colors">
             <ArrowLeft className="w-5 h-5 text-slate-600" />

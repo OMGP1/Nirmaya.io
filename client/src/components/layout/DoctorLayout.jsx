@@ -152,9 +152,9 @@ const DoctorLayout = () => {
     );
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="flex h-screen overflow-hidden bg-gray-50">
             {/* Mobile Header Bar */}
-            <div className="lg:hidden fixed top-0 left-0 right-0 z-40 h-16 bg-gradient-to-r from-gray-800 to-gray-900 backdrop-blur-xl flex items-center justify-between px-4 shadow-lg">
+            <div className="lg:hidden fixed top-0 left-0 right-0 z-40 h-16 bg-gradient-to-r from-gray-800 to-gray-900 backdrop-blur-xl flex items-center justify-between px-4 shadow-lg flex-shrink-0">
                 <button
                     onClick={() => setSidebarOpen(true)}
                     className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
@@ -180,13 +180,13 @@ const DoctorLayout = () => {
             {/* Sidebar - Glass Effect */}
             <aside
                 className={`
-                    fixed lg:fixed inset-y-0 left-0 z-50
+                    fixed lg:static inset-y-0 left-0 z-50
                     w-64 sm:w-72 lg:w-64
                     bg-gradient-to-b from-gray-800/95 via-gray-900/95 to-gray-900/98 backdrop-blur-xl
                     text-white border-r border-white/10
                     flex flex-col min-h-screen
                     transform transition-transform duration-300 ease-in-out
-                    shadow-2xl lg:shadow-none
+                    shadow-2xl lg:shadow-none flex-shrink-0
                     ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
                 `}
             >
@@ -194,12 +194,12 @@ const DoctorLayout = () => {
             </aside>
 
             {/* Main content */}
-            <div className="lg:pl-64">
+            <div className="flex-1 flex flex-col h-screen overflow-hidden w-full relative">
                 {/* Spacer for mobile header */}
-                <div className="lg:hidden h-16" />
+                <div className="lg:hidden h-16 shrink-0" />
 
                 {/* Page content */}
-                <main className="p-4 lg:p-6">
+                <main className="flex-1 overflow-y-auto p-4 lg:p-6 w-full">
                     <Outlet />
                 </main>
             </div>

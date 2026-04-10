@@ -64,10 +64,10 @@ const Appointments = () => {
     const appointments = activeTab === 'upcoming' ? upcomingAppointments : pastAppointments;
 
     return (
-        <div className="min-h-screen w-full bg-slate-50 flex flex-row relative overflow-hidden">
+        <div className="h-screen w-full bg-slate-50 flex flex-row overflow-hidden relative">
             <PatientSidebar />
             
-            <main className="flex-1 flex flex-col min-h-screen relative overflow-y-auto w-full">
+            <main className="flex-1 flex flex-col h-screen overflow-y-auto relative w-full">
                 {/* Header / Banner */}
                 <div className="bg-white border-b border-slate-200 px-6 py-8 sm:px-12 flex flex-col space-y-4 sm:flex-row sm:items-end justify-between">
                     <div>

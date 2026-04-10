@@ -93,11 +93,11 @@ const Dashboard = () => {
     }
 
     return (
-        <div className={`min-h-screen w-full bg-slate-50 flex flex-row relative overflow-hidden ${isCritical ? 'theme-emergency' : ''}`}>
+        <div className={`h-screen w-full bg-slate-50 flex flex-row overflow-hidden relative ${isCritical ? 'theme-emergency' : ''}`}>
             <PatientSidebar />
 
             {/* Main Content */}
-            <main className="flex-1 flex flex-col min-h-screen relative overflow-y-auto">
+            <main className="flex-1 flex flex-col h-screen overflow-y-auto relative">
                 {/* Top Bar */}
                 <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-slate-200 px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-4 lg:hidden">
