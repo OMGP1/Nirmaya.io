@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} - HealthBook</title>
+    <style>
+        /* Reset */
+        body,
+        table,
+        td,
+        p,
+        a {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            width: 100% !important;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+
+        table {
+            border-collapse: collapse;
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+        }
+
+        img {
+            border: 0;
+            outline: none;
+            text-decoration: none;
+        }
+
+        /* Base Styles */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #334155;
+            background-color: #f1f5f9;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 32px 24px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .logo {
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .content {
+            padding: 32px 24px;
+        }
+
+        .greeting {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 16px;
+        }
+
+        .message {
+            color: #475569;
+            margin-bottom: 24px;
+        }
+
+        .details-card {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+
+        .detail-row {
+            display: flex;
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #64748b;
+            font-size: 14px;
+            min-width: 120px;
+        }
+
+        .detail-value {
+            color: #1e293b;
+            font-weight: 500;
+        }
+
+        .button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff !important;
+            text-decoration: none;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            margin: 16px 0;
+        }
+
+        .button-secondary {
+            background: #e2e8f0;
+            color: #475569 !important;
+        }
+
+        .footer {
+            background-color: #f8fafc;
+            padding: 24px;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .footer p {
+            color: #64748b;
+            font-size: 12px;
+            margin: 4px 0;
+        }
+
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .alert {
+            padding: 16px;
+            border-radius: 8px;
+            margin: 16px 0;
+        }
+
+        .alert-success {
+            background-color: #dcfce7;
+            border: 1px solid #86efac;
+            color: #166534;
+        }
+
+        .alert-warning {
+            background-color: #fef3c7;
+            border: 1px solid #fcd34d;
+            color: #92400e;
+        }
+
+        .alert-info {
+            background-color: #dbeafe;
+            border: 1px solid #93c5fd;
+            color: #1e40af;
+        }
+
+        /* Mobile Responsive */
+        @media only screen and (max-width: 600px) {
+            .container {
+                padding: 12px;
+            }
+
+            .content {
+                padding: 24px 16px;
+            }
+
+            .header {
+                padding: 24px 16px;
+            }
+
+            .details-card {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <!-- Header -->
+            <div class="header">
+                <div class="logo">🏥 HealthBook</div>
+                <h1>{{title}}</h1>
+            </div>
+
+            <!-- Content -->
+            <div class="content">
+                {{{body}}}
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <p><strong>HealthBook</strong> - Healthcare Appointments Made Simple</p>
+                <p>© {{year}} HealthBook. All rights reserved.</p>
+                <p>
+                    <a href="{{appUrl}}">Visit Website</a> |
+                    <a href="{{appUrl}}/settings">Email Preferences</a> |
+                    <a href="{{appUrl}}/support">Contact Support</a>
+                </p>
+                <p style="margin-top: 12px; font-size: 11px;">
+                    This email was sent to {{recipientEmail}}. If you did not request this email, please ignore it.
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
