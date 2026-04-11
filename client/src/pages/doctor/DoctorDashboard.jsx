@@ -42,42 +42,26 @@ const DoctorDashboard = () => {
 
                 setDoctorRecordId(doctor.id);
 
-                const today = new Date();
-                const todayStart = startOfDay(today).toISOString();
-                const todayEnd = endOfDay(today).toISOString();
+                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5005';
+                const { data: { session } } = await supabase.auth.getSession();
+                
+                if (!session?.access_token) {
+                    throw new Error("Not authenticated");
+                }
 
-                const { data: todayAppointments, error: todayError } = await supabase
-                    .from('appointments')
-                    .select(`*, patient:users!appointments_patient_id_fkey(id, full_name, email)`)
-                    .eq('doctor_id', doctor.id)
-                    .gte('start_time', todayStart)
-                    .lte('start_time', todayEnd)
-                    .neq('status', 'cancelled')
-                    .order('start_time', { ascending: true });
-
-                if (todayError) console.error('Error fetching today appointments:', todayError);
-
-                const { data: pendingAppointments } = await supabase
-                    .from('appointments')
-                    .select('id')
-                    .eq('doctor_id', doctor.id)
-                    .eq('status', 'pending');
-
-                const { data: upcomingAppointments } = await supabase
-                    .from('appointments')
-                    .select('id')
-                    .eq('doctor_id', doctor.id)
-                    .gte('start_time', new Date().toISOString())
-                    .neq('status', 'cancelled');
-
-                setSummary({
-                    todayAppointments: todayAppointments || [],
-                    stats: {
-                        todayTotal: todayAppointments?.length || 0,
-                        pending: pendingAppointments?.length || 0,
-                        upcoming: upcomingAppointments?.length || 0,
+                const res = await fetch(`${API_URL}/api/doctor/dashboard/summary`, {
+                    headers: {
+                        'Authorization': `Bearer ${session.access_token}`
                     }
                 });
+
+                const json = await res.json();
+                
+                if (!res.ok) {
+                    throw new Error(json.error?.message || 'Failed to fetch dashboard data');
+                }
+
+                setSummary(json.data);
             } catch (err) {
                 console.error('Dashboard fetch error:', err);
                 setError(err.message);

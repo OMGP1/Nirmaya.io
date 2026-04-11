@@ -157,21 +157,25 @@ const AppointmentDetail = () => {
             try {
                 if (!user || !id) return;
 
-                const { data, error: fetchError } = await supabase
-                    .from('appointments')
-                    .select(`
-                        *,
-                        patient:users!appointments_patient_id_fkey(id, full_name, email, phone)
-                    `)
-                    .eq('id', id)
-                    .single();
-
-                if (fetchError) {
-                    throw fetchError;
+                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5005';
+                const { data: { session } } = await supabase.auth.getSession();
+                
+                if (!session?.access_token) {
+                    throw new Error("Not authenticated");
                 }
 
-                setAppointment(data);
-                setNotes(data.clinical_notes || '');
+                const res = await fetch(`${API_URL}/api/doctor/appointments/${id}`, {
+                    headers: { 'Authorization': `Bearer ${session.access_token}` }
+                });
+
+                const json = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(json.error?.message || 'Failed to fetch appointment');
+                }
+
+                setAppointment(json.data?.appointment);
+                setNotes(json.data?.appointment?.clinical_notes || '');
             } catch (err) {
                 console.error('Error fetching appointment:', err);
                 setError(err.message);
@@ -189,21 +193,25 @@ const AppointmentDetail = () => {
         try {
             setActionLoading(true);
 
-            const { data, error } = await supabase
-                .from('appointments')
-                .update({ status: newStatus })
-                .eq('id', id)
-                .select(`
-                    *,
-                    patient:users!appointments_patient_id_fkey(id, full_name, email, phone)
-                `)
-                .single();
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5005';
+            const { data: { session } } = await supabase.auth.getSession();
 
-            if (error) {
-                throw error;
+            const res = await fetch(`${API_URL}/api/doctor/appointments/${id}/status`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session?.access_token}`
+                },
+                body: JSON.stringify({ status: newStatus })
+            });
+
+            const json = await res.json();
+
+            if (!res.ok) {
+                throw new Error(json.error?.message || 'Failed to update status');
             }
 
-            setAppointment(data);
+            setAppointment(json.data?.appointment);
         } catch (err) {
             console.error('Status update error:', err);
             alert('Failed to update appointment status');
@@ -216,21 +224,25 @@ const AppointmentDetail = () => {
         try {
             setSaving(true);
 
-            const { data, error } = await supabase
-                .from('appointments')
-                .update({ clinical_notes: notes })
-                .eq('id', id)
-                .select(`
-                    *,
-                    patient:users!appointments_patient_id_fkey(id, full_name, email, phone)
-                `)
-                .single();
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5005';
+            const { data: { session } } = await supabase.auth.getSession();
 
-            if (error) {
-                throw error;
+            const res = await fetch(`${API_URL}/api/doctor/appointments/${id}/notes`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session?.access_token}`
+                },
+                body: JSON.stringify({ notes })
+            });
+
+            const json = await res.json();
+
+            if (!res.ok) {
+                throw new Error(json.error?.message || 'Failed to save notes');
             }
 
-            setAppointment(data);
+            setAppointment(json.data?.appointment);
             alert('Notes saved successfully!');
         } catch (err) {
             console.error('Save notes error:', err);

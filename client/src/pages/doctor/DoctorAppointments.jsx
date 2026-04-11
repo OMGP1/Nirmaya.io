@@ -51,32 +51,35 @@ const DoctorAppointments = () => {
     }, [user]);
 
     const fetchAppointments = async () => {
-        if (!doctorId) return;
-
         try {
             setLoading(true);
             setError(null);
 
-            let query = supabase
-                .from('appointments')
-                .select(`
-                    *,
-                    patient:users!appointments_patient_id_fkey(id, full_name, email)
-                `)
-                .eq('doctor_id', doctorId)
-                .order('start_time', { ascending: false });
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5005';
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            if (!session?.access_token) {
+                throw new Error("Not authenticated");
+            }
 
+            const url = new URL(`${API_URL}/api/doctor/appointments`);
             if (filter !== 'all') {
-                query = query.eq('status', filter);
+                url.searchParams.append('status', filter);
             }
 
-            const { data, error: fetchError } = await query;
+            const res = await fetch(url.toString(), {
+                headers: {
+                    'Authorization': `Bearer ${session.access_token}`
+                }
+            });
 
-            if (fetchError) {
-                throw fetchError;
+            const json = await res.json();
+
+            if (!res.ok) {
+                throw new Error(json.error?.message || 'Failed to fetch tracking data');
             }
 
-            setAppointments(data || []);
+            setAppointments(json.data?.appointments || []);
         } catch (err) {
             console.error('Failed to fetch appointments:', err);
             setError(err.message);
@@ -86,10 +89,10 @@ const DoctorAppointments = () => {
     };
 
     useEffect(() => {
-        if (doctorId) {
+        if (user) {
             fetchAppointments();
         }
-    }, [doctorId, filter]);
+    }, [user, filter]);
 
     useEffect(() => {
         const fetchRisks = async () => {

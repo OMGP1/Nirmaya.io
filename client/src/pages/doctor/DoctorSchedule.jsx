@@ -39,23 +39,28 @@ const DoctorSchedule = () => {
                 const startDate = currentWeek.toISOString();
                 const endDate = addDays(currentWeek, 7).toISOString();
 
-                const { data, error } = await supabase
-                    .from('appointments')
-                    .select(`
-                        *,
-                        patient:users!appointments_patient_id_fkey(id, full_name, email)
-                    `)
-                    .eq('doctor_id', doctor.id)
-                    .gte('start_time', startDate)
-                    .lte('start_time', endDate)
-                    .order('start_time', { ascending: true });
-
-                if (error) {
-                    console.error('Error fetching appointments:', error);
-                    return;
+                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5005';
+                const { data: { session } } = await supabase.auth.getSession();
+                
+                if (!session?.access_token) {
+                    throw new Error("Not authenticated");
                 }
 
-                setAppointments(data || []);
+                const url = new URL(`${API_URL}/api/doctor/appointments`);
+                url.searchParams.append('start_date', startDate);
+                url.searchParams.append('end_date', endDate);
+
+                const res = await fetch(url.toString(), {
+                    headers: { 'Authorization': `Bearer ${session.access_token}` }
+                });
+
+                const json = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(json.error?.message || 'Failed to fetch schedule');
+                }
+
+                setAppointments(json.data?.appointments || []);
             } catch (err) {
                 console.error('Failed to fetch schedule:', err);
             } finally {
