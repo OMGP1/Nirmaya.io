@@ -99,24 +99,24 @@ const Dashboard = () => {
             {/* Main Content */}
             <main className="flex-1 flex flex-col h-screen overflow-y-auto relative">
                 {/* Top Bar */}
-                <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+                <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-slate-200 px-4 sm:px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-4 lg:hidden ml-10">
                         <span className="text-lg font-heading font-bold text-[#1A2B48]">Niramaya</span>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="hidden md:flex items-center gap-2">
                         <Shield className="w-4 h-4 text-[#008080]" />
                         <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">DPDPA 2023 Compliant</span>
                     </div>
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3 sm:gap-4 ml-auto">
                         <button className="relative w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-[#1A2B48]">
                             <Bell className="w-5 h-5" />
                             {isCritical && (
                                 <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white animate-pulse" />
                             )}
                         </button>
-                        <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
+                        <div className="flex items-center gap-3 pl-3 sm:pl-4 border-l border-slate-200">
                             <div className="text-right hidden sm:block">
                                 <p className="text-sm font-bold text-[#1A2B48]">{profile?.full_name || 'Patient'}</p>
                                 <p className="text-xs text-slate-500">Clinical Profile</p>
@@ -156,64 +156,64 @@ const Dashboard = () => {
                             </div>
 
                             {/* Live Vitals Cards */}
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                                 {/* Heart Rate */}
-                                <div className={`p-5 rounded-2xl border shadow-sm ${isCritical ? 'bg-red-50 border-red-200' : 'bg-white border-slate-100'}`}>
+                                <div className={`p-4 sm:p-5 rounded-2xl border shadow-sm ${isCritical ? 'bg-red-50 border-red-200' : 'bg-white border-slate-100'}`}>
                                     <div className="flex items-center justify-between mb-3">
                                         <div className="flex items-center gap-2">
-                                            <div className={`p-2 rounded-lg ${isCritical ? 'bg-red-100' : 'bg-red-50'}`}>
-                                                <Heart className={`w-4 h-4 ${isCritical ? 'text-red-600' : 'text-red-500'}`} />
+                                            <div className={`p-1.5 sm:p-2 rounded-lg ${isCritical ? 'bg-red-100' : 'bg-red-50'}`}>
+                                                <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isCritical ? 'text-red-600' : 'text-red-500'}`} />
                                             </div>
-                                            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Heart Rate</span>
+                                            <span className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Heart Rate</span>
                                         </div>
-                                        <span className="relative flex h-2 w-2">
+                                        <span className="relative flex h-1.5 w-1.5 sm:h-2 sm:w-2">
                                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
-                                            <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+                                            <span className="relative inline-flex rounded-full h-1.5 w-1.5 sm:h-2 sm:w-2 bg-red-500" />
                                         </span>
                                     </div>
                                     <div className="flex items-baseline gap-1">
-                                        <span id="val-hr" className="text-3xl font-heading font-black text-[#1A2B48]">{vitals?.hr || '--'}</span>
-                                        <span className="text-sm text-slate-400">bpm</span>
+                                        <span id="val-hr" className="text-2xl sm:text-3xl font-heading font-black text-[#1A2B48]">{vitals?.hr || '--'}</span>
+                                        <span className="text-xs sm:text-sm text-slate-400">bpm</span>
                                     </div>
                                 </div>
 
                                 {/* SpO2 */}
-                                <div className={`p-5 rounded-2xl border shadow-sm ${isCritical ? 'bg-red-50 border-red-200' : 'bg-white border-slate-100'}`}>
+                                <div className={`p-4 sm:p-5 rounded-2xl border shadow-sm ${isCritical ? 'bg-red-50 border-red-200' : 'bg-white border-slate-100'}`}>
                                     <div className="flex items-center justify-between mb-3">
                                         <div className="flex items-center gap-2">
-                                            <div className="p-2 rounded-lg bg-cyan-50">
-                                                <Droplets className="w-4 h-4 text-cyan-500" />
+                                            <div className="p-1.5 sm:p-2 rounded-lg bg-cyan-50">
+                                                <Droplets className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-500" />
                                             </div>
-                                            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">SpO2</span>
+                                            <span className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">SpO2</span>
                                         </div>
-                                        <span className="relative flex h-2 w-2">
+                                        <span className="relative flex h-1.5 w-1.5 sm:h-2 sm:w-2">
                                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
-                                            <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500" />
+                                            <span className="relative inline-flex rounded-full h-1.5 w-1.5 sm:h-2 sm:w-2 bg-cyan-500" />
                                         </span>
                                     </div>
                                     <div className="flex items-baseline gap-1">
-                                        <span id="val-spo2" className="text-3xl font-heading font-black text-[#1A2B48]">{vitals?.spo2 || '--'}</span>
-                                        <span className="text-sm text-slate-400">%</span>
+                                        <span id="val-spo2" className="text-2xl sm:text-3xl font-heading font-black text-[#1A2B48]">{vitals?.spo2 || '--'}</span>
+                                        <span className="text-xs sm:text-sm text-slate-400">%</span>
                                     </div>
                                 </div>
 
-                                {/* Respiratory */}
-                                <div className={`p-5 rounded-2xl border shadow-sm ${isCritical ? 'bg-red-50 border-red-200' : 'bg-white border-slate-100'}`}>
+                                {/* Respiratory (Spans full width on mobile if odd number) */}
+                                <div className={`col-span-2 lg:col-span-1 p-4 sm:p-5 rounded-2xl border shadow-sm ${isCritical ? 'bg-red-50 border-red-200' : 'bg-white border-slate-100'}`}>
                                     <div className="flex items-center justify-between mb-3">
                                         <div className="flex items-center gap-2">
-                                            <div className="p-2 rounded-lg bg-blue-50">
-                                                <Wind className="w-4 h-4 text-blue-500" />
+                                            <div className="p-1.5 sm:p-2 rounded-lg bg-blue-50">
+                                                <Wind className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-500" />
                                             </div>
-                                            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Resp. Rate</span>
+                                            <span className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Resp. Rate</span>
                                         </div>
-                                        <span className="relative flex h-2 w-2">
+                                        <span className="relative flex h-1.5 w-1.5 sm:h-2 sm:w-2">
                                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
-                                            <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" />
+                                            <span className="relative inline-flex rounded-full h-1.5 w-1.5 sm:h-2 sm:w-2 bg-blue-500" />
                                         </span>
                                     </div>
                                     <div className="flex items-baseline gap-1">
-                                        <span className="text-3xl font-heading font-black text-[#1A2B48]">{vitals?.rr || '--'}</span>
-                                        <span className="text-sm text-slate-400">rpm</span>
+                                        <span className="text-2xl sm:text-3xl font-heading font-black text-[#1A2B48]">{vitals?.rr || '--'}</span>
+                                        <span className="text-xs sm:text-sm text-slate-400">rpm</span>
                                     </div>
                                 </div>
                             </div>
@@ -255,7 +255,7 @@ const Dashboard = () => {
                     </div>
 
                     {/* Appointment Stats */}
-                    <div className="grid sm:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                         <Link to="/appointments?status=pending" className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow flex items-center gap-4">
                             <div className="w-12 h-12 rounded-xl bg-[#008080]/10 flex items-center justify-center">
                                 <Calendar className="w-6 h-6 text-[#008080]" />
@@ -300,28 +300,39 @@ const Dashboard = () => {
                             {error ? (
                                 <div className="p-8 text-center text-red-500">{error}</div>
                             ) : appointments.length > 0 ? (
-                                <div className="divide-y divide-slate-50">
+                                <div className="divide-y divide-slate-100">
                                     {appointments.map((apt) => (
-                                        <div key={apt.id} className="flex items-center justify-between px-6 py-4 hover:bg-slate-50 transition-colors">
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">
+                                        <div key={apt.id} className="flex flex-col sm:flex-row sm:items-center justify-between px-4 sm:px-6 py-4 hover:bg-slate-50 transition-colors gap-3 sm:gap-4">
+                                            <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
+                                                <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200">
                                                     <User className="w-5 h-5 text-slate-500" />
                                                 </div>
-                                                <div>
-                                                    <p className="font-bold text-sm text-[#1A2B48]">{formatDoctorName(apt.doctor?.user?.full_name)}</p>
-                                                    <p className="text-xs text-slate-500">{apt.doctor?.specialization || apt.doctor?.department?.name || 'Specialist'}</p>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="font-bold text-sm text-[#1A2B48] truncate">{formatDoctorName(apt.doctor?.user?.full_name)}</p>
+                                                    <p className="text-xs text-slate-500 truncate mb-1 sm:mb-0">{apt.doctor?.specialization || apt.doctor?.department?.name || 'Specialist'}</p>
+                                                    {/* Mobile Date/Time wrapper */}
+                                                    <div className="flex sm:hidden items-center gap-2 mt-1 bg-slate-50 px-2 py-1 rounded w-fit">
+                                                        <Clock className="w-3 h-3 text-slate-400" />
+                                                        <p className="text-xs font-bold text-[#1A2B48]">{formatAppointmentDate(apt.start_time)}</p>
+                                                        <span className="text-slate-300 text-[10px]">|</span>
+                                                        <p className="text-[11px] font-medium text-slate-500">{formatAppointmentTime(apt.start_time)}</p>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div className="text-right hidden sm:block">
-                                                <p className="text-sm font-bold text-[#1A2B48]">{formatAppointmentDate(apt.start_time)}</p>
-                                                <p className="text-xs text-slate-500">{formatAppointmentTime(apt.start_time)}</p>
+                                            <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-6 w-full sm:w-auto pl-14 sm:pl-0">
+                                                <div className="text-right hidden sm:block">
+                                                    <p className="text-sm font-bold text-[#1A2B48]">{formatAppointmentDate(apt.start_time)}</p>
+                                                    <p className="text-xs mt-0.5 text-slate-500 font-medium">{formatAppointmentTime(apt.start_time)}</p>
+                                                </div>
+                                                <div className="flex items-center justify-between w-full sm:w-auto gap-4">
+                                                    <Badge variant={apt.status === 'confirmed' ? 'success' : apt.status === 'pending' ? 'warning' : 'default'} className="shrink-0">
+                                                        {apt.status}
+                                                    </Badge>
+                                                    <Link to="/appointments" className="p-2 sm:p-0 bg-slate-50 sm:bg-transparent rounded-lg sm:rounded-none group shrink-0">
+                                                        <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#008080] transition-colors" />
+                                                    </Link>
+                                                </div>
                                             </div>
-                                            <Badge variant={apt.status === 'confirmed' ? 'success' : apt.status === 'pending' ? 'warning' : 'default'}>
-                                                {apt.status}
-                                            </Badge>
-                                            <Link to="/appointments">
-                                                <ArrowRight className="w-4 h-4 text-slate-400 hover:text-[#008080] transition-colors" />
-                                            </Link>
                                         </div>
                                     ))}
                                 </div>
@@ -371,19 +382,19 @@ const Dashboard = () => {
                 </div>
 
                 {/* Terminal Footer */}
-                <footer className="mt-auto p-4 bg-white border-t border-slate-200 flex justify-between items-center">
-                    <div className="flex items-center gap-4 text-[10px] font-mono text-slate-400">
-                        <span className="flex items-center gap-1">
-                            <span className="w-1 h-1 rounded-full" style={{ backgroundColor: riskHex }} />
-                            RISK_ENGINE: NEWS2_v5
+                <footer className="mt-auto p-3 sm:p-4 bg-white border-t border-slate-200 flex flex-wrap gap-2 justify-between items-center">
+                    <div className="flex items-center gap-4 text-[10px] sm:text-xs font-mono text-slate-400">
+                        <span className="flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full shadow-[0_0_4px_currentColor]" style={{ backgroundColor: riskHex, color: riskHex }} />
+                            NEWS2_v5
                         </span>
-                        <span className="flex items-center gap-1">
-                            <span className="w-1 h-1 bg-[#008080] rounded-full" />
-                            ENCRYPTION: AES-256
+                        <span className="hidden sm:flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 bg-[#008080] rounded-full shadow-[0_0_4px_#008080]" />
+                            AES-256
                         </span>
                     </div>
-                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                        System Latency: 142ms
+                    <div className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest hidden sm:block">
+                        Latency: 142ms
                     </div>
                 </footer>
             </main>

@@ -85,17 +85,17 @@ const SymptomTriage = () => {
     <div className="h-screen w-full bg-slate-50 flex flex-row overflow-hidden relative">
       <PatientSidebar />
       <main className="flex-1 flex flex-col h-screen overflow-y-auto relative">
-        <header className="bg-white border-b border-slate-200 px-8 pt-16 pb-6 sm:py-6 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-[#008080]/10 rounded-xl flex items-center justify-center">
+        <header className="bg-white border-b border-slate-200 px-6 sm:px-8 pt-16 pb-6 sm:py-6 flex items-center justify-between shrink-0 gap-4">
+          <div className="flex items-center gap-3 sm:gap-4 shrink">
+            <div className="w-10 h-10 bg-[#008080]/10 rounded-xl flex items-center justify-center shrink-0">
               <Brain className="w-5 h-5 text-[#008080]" />
             </div>
-            <div>
-              <h1 className="text-xl font-heading font-black text-[#1A2B48]">AI Symptom Triage</h1>
-              <p className="text-xs text-slate-500">BioBERT Clinical NLP Engine v4.2</p>
+            <div className="min-w-0">
+              <h1 className="text-lg sm:text-xl font-heading font-black text-[#1A2B48] truncate">AI Symptom Triage</h1>
+              <p className="text-[10px] sm:text-xs text-slate-500 truncate">BioBERT Clinical NLP Engine v4.2</p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 shrink-0">
             {/* Risk Score Badge */}
             {riskScore > 0 && (
               <div className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg border ${
@@ -122,17 +122,17 @@ const SymptomTriage = () => {
         </header>
 
         <div className="flex-1 flex flex-col justify-center items-center p-8 max-w-3xl mx-auto w-full">
-          <div className="inline-flex items-center gap-3 bg-[#008080]/5 border border-[#008080]/10 px-5 py-2.5 rounded-full mb-8">
-            <Activity className="w-4 h-4 text-[#008080] animate-pulse" />
-            <span className="text-xs font-bold text-[#008080] uppercase tracking-wider">Neural Pipeline Active</span>
+          <div className="inline-flex items-center gap-3 bg-[#008080]/5 border border-[#008080]/10 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full mb-6 sm:mb-8 text-center shrink-0">
+            <Activity className="w-4 h-4 text-[#008080] animate-pulse shrink-0" />
+            <span className="text-[10px] sm:text-xs font-bold text-[#008080] uppercase tracking-wider">Neural Pipeline Active</span>
           </div>
 
-          <h2 className="text-3xl font-heading font-black text-[#1A2B48] text-center mb-2">Describe Your Symptoms</h2>
-          <p className="text-slate-500 text-center mb-8 max-w-lg">
+          <h2 className="text-2xl sm:text-3xl font-heading font-black text-[#1A2B48] text-center mb-2 px-2">Describe Your Symptoms</h2>
+          <p className="text-sm sm:text-base text-slate-500 text-center mb-6 sm:mb-8 max-w-lg px-4">
             Use natural language to describe what you&apos;re experiencing. Our AI will analyze and route to the appropriate specialist.
           </p>
 
-          <div className="w-full bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+          <div className="w-full bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 space-y-4">
             <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -140,8 +140,8 @@ const SymptomTriage = () => {
               rows={6}
               className="w-full resize-none text-sm text-[#1A2B48] placeholder:text-slate-300 bg-slate-50 border border-slate-100 rounded-xl p-5 focus:ring-2 focus:ring-[#008080] focus:border-transparent outline-none transition-all leading-relaxed"
             />
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center justify-between sm:justify-start gap-4">
                 <span className="text-xs font-bold text-slate-400">{input.length}/500</span>
                 <button
                   onClick={handleVoiceInput}
@@ -162,12 +162,12 @@ const SymptomTriage = () => {
                   {isRecording ? 'Listening...' : 'Voice Input'}
                 </button>
               </div>
-              <div className="flex items-center gap-3">
-                <button onClick={() => navigate('/dashboard')} className="px-4 py-2.5 text-sm font-bold text-slate-500 hover:text-[#1A2B48] transition-colors">Cancel</button>
+              <div className="flex items-center gap-3 w-full sm:w-auto pt-4 border-t border-slate-100 sm:pt-0 sm:border-0">
+                <button onClick={() => navigate('/dashboard')} className="flex-1 sm:flex-none px-4 py-2.5 text-sm font-bold text-slate-500 bg-slate-50 border border-slate-200 sm:bg-transparent sm:border-0 rounded-xl sm:rounded-none hover:text-[#1A2B48] transition-colors text-center">Cancel</button>
                 <button
                   onClick={handleAnalyze}
                   disabled={input.length < 10 || isAnalyzing}
-                  className="px-6 py-3 bg-[#008080] text-white font-heading font-bold text-sm rounded-xl shadow-[0_4px_12px_rgba(0,128,128,0.3)] hover:shadow-[0_8px_20px_rgba(0,128,128,0.4)] transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="flex-1 sm:flex-none justify-center px-4 sm:px-6 py-3 bg-[#008080] text-white font-heading font-bold text-sm rounded-xl shadow-[0_4px_12px_rgba(0,128,128,0.3)] hover:shadow-[0_8px_20px_rgba(0,128,128,0.4)] transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 sm:gap-2"
                 >
                   {isAnalyzing ? (<><Activity className="w-4 h-4 animate-spin" /> Analyzing...</>) : (<>Analyze with AI <ArrowRight className="w-4 h-4" /></>)}
                 </button>
@@ -178,25 +178,25 @@ const SymptomTriage = () => {
           {/* SOS Emergency Button — Now fully functional */}
           <button
             onClick={handleSOSTrigger}
-            className="mt-8 px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-heading font-black rounded-2xl shadow-[0_4px_12px_rgba(231,29,54,0.3)] hover:shadow-[0_8px_24px_rgba(231,29,54,0.5)] transition-all flex items-center gap-3 group relative overflow-hidden"
+            className="w-full sm:w-auto justify-center mt-8 px-6 sm:px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-heading font-black rounded-2xl shadow-[0_4px_12px_rgba(231,29,54,0.3)] hover:shadow-[0_8px_24px_rgba(231,29,54,0.5)] transition-all flex flex-wrap items-center gap-3 group relative overflow-hidden text-sm sm:text-base text-center"
           >
             {/* Pulse ring animation */}
             <span className="absolute inset-0 rounded-2xl border-2 border-red-400/50 animate-ping opacity-30" />
-            <Radio className="w-5 h-5 group-hover:animate-pulse" />
+            <Radio className="w-5 h-5 group-hover:animate-pulse hidden sm:block" />
             Emergency SOS — Trigger Alert Now
-            <AlertTriangle className="w-5 h-5" />
+            <AlertTriangle className="w-5 h-5 shrink-0" />
           </button>
-          <p className="mt-3 text-[10px] text-slate-400 flex items-center gap-1">
-            <Shield className="w-3 h-3 text-red-400" />
+          <p className="mt-4 sm:mt-3 mb-6 sm:mb-0 text-[10px] text-slate-400 flex items-center justify-center text-center gap-1.5 max-w-xs sm:max-w-none px-4">
+            <Shield className="w-3 h-3 text-red-400 shrink-0" />
             SOS uses GPS to find the nearest available doctor instantly
           </p>
         </div>
 
-        <footer className="p-4 bg-white border-t border-slate-200">
-          <div className="max-w-3xl mx-auto flex justify-between items-center text-[10px] font-mono text-slate-400">
-            <span>BERT_MODEL: BioBERT_v1.1 • Latency: 184ms</span>
-            <div className="flex items-center gap-3">
-              <Lock className="w-3 h-3 text-[#008080]" /> <span>AES-256 • DPDPA Compliant</span>
+        <footer className="p-4 bg-white border-t border-slate-200 mt-auto">
+          <div className="max-w-3xl mx-auto flex flex-col sm:flex-row justify-between items-center text-[10px] uppercase font-bold tracking-widest text-slate-400 gap-2">
+            <span className="text-center sm:text-left">BioBERT_v1.1 • Latency: 184ms</span>
+            <div className="flex items-center gap-2">
+              <Lock className="w-3 h-3 text-[#008080]" /> <span className="hidden sm:inline">AES-256 • </span><span>DPDPA Compliant</span>
             </div>
           </div>
         </footer>
