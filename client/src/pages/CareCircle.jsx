@@ -6,11 +6,18 @@ import PatientSidebar from '@/components/layout/PatientSidebar';
 import { Users, Plus, Save, Shield, Trash2, Phone, UserPlus } from 'lucide-react';
 
 const CareCircle = () => {
-  const [contacts, setContacts] = useState([
-    { id: 1, name: '', mobile: '', relationship: '' },
-    { id: 2, name: '', mobile: '', relationship: '' },
-  ]);
-  const [dpdpaConsent, setDpdpaConsent] = useState(false);
+  const [contacts, setContacts] = useState(() => {
+    const saved = localStorage.getItem('niramaya_care_circle');
+    if (saved) return JSON.parse(saved);
+    return [
+      { id: 1, name: '', mobile: '', relationship: '' },
+      { id: 2, name: '', mobile: '', relationship: '' },
+    ];
+  });
+  
+  const [dpdpaConsent, setDpdpaConsent] = useState(() => {
+    return localStorage.getItem('niramaya_dpdpa_consent') === 'true';
+  });
   const [saved, setSaved] = useState(false);
 
   const updateContact = (id, field, value) => {
@@ -20,6 +27,7 @@ const CareCircle = () => {
   const handleSave = () => {
     // Stub — will wire to backend
     localStorage.setItem('niramaya_care_circle', JSON.stringify(contacts));
+    localStorage.setItem('niramaya_dpdpa_consent', dpdpaConsent);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
