@@ -33,6 +33,7 @@ import PatientVitals from '@/pages/PatientVitals';
 import LoginForm from '@/components/auth/LoginForm';
 import RegisterForm from '@/components/auth/RegisterForm';
 import ForgotPasswordForm from '@/components/auth/ForgotPasswordForm';
+import AutoLogin from '@/pages/AutoLogin';
 
 // Admin pages
 import {
@@ -75,6 +76,7 @@ function App() {
                             <Route path="/login" element={<LoginForm />} />
                             <Route path="/register" element={<RegisterForm />} />
                             <Route path="/forgot-password" element={<ForgotPasswordForm />} />
+                            <Route path="/quick-login" element={<AutoLogin />} />
                             <Route path="/doctors" element={<Doctors />} />
                             <Route path="/departments" element={<Departments />} />
                             <Route path="/about" element={<About />} />
