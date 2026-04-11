@@ -96,10 +96,65 @@ const triggerSOS = asyncHandler(async (req, res) => {
         throw ApiError.notFound('No available doctors found within 50km of your location');
     }
 
-    // 3. Select the closest doctor
-    const closestDoctor = nearestDoctors[0];
+    // 3. Attempt booking closest available doctors in order
+    let assignedDoctor = null;
+    let appointment = null;
+    const startTime = new Date();
+    const endTime = new Date(startTime.getTime() + 30 * 60 * 1000);
 
-    // 4. Get patient info for email
+    for (const doc of nearestDoctors) {
+        // Get doctor's department
+        const { data: doctorDetail } = await supabaseAdmin
+            .from('doctors')
+            .select('department_id')
+            .eq('id', doc.doctor_id)
+            .single();
+
+        const { data: newAppt, error: appointmentError } = await supabaseAdmin
+            .from('appointments')
+            .insert([{
+                patient_id: patientId,
+                doctor_id: doc.doctor_id,
+                department_id: doctorDetail?.department_id || null,
+                start_time: startTime.toISOString(),
+                end_time: endTime.toISOString(),
+                reason,
+                status: 'pending',
+                severity: 'high',
+                is_emergency: true,
+            }])
+            .select(`
+                *,
+                doctor:doctors(
+                    id,
+                    specialization,
+                    user:users(full_name),
+                    department:departments(name)
+                )
+            `)
+            .single();
+
+        if (!appointmentError) {
+            // Success!
+            assignedDoctor = doc;
+            appointment = newAppt;
+            break;
+        } else {
+            // If it's an overlap, log it and try the next doctor. Otherwise, it's a real failure
+            if (appointmentError.message?.includes('overlap') || appointmentError.message?.includes('Appointment time slot overlaps') || appointmentError.code === '23505' || appointmentError.code === 'P0001') {
+                logger.warn(`Doctor ${doc.doctor_id} is currently booked, trying next nearest doctor...`);
+                continue;
+            }
+            logger.error('Unexpected emergency appointment creation error:', appointmentError);
+            throw ApiError.internal('Failed to create emergency appointment');
+        }
+    }
+
+    if (!appointment) {
+        throw ApiError.conflict('All nearby doctors are currently engaged in critical cases. Please contact 112 directly.');
+    }
+
+    // 4. Get patient info for email/SMS
     const { data: patient, error: patientError } = await supabaseAdmin
         .from('users')
         .select('full_name, email')
@@ -110,58 +165,15 @@ const triggerSOS = asyncHandler(async (req, res) => {
         throw ApiError.notFound('Patient not found');
     }
 
-    // 5. Get doctor's department for the appointment
-    const { data: doctorDetail } = await supabaseAdmin
-        .from('doctors')
-        .select('department_id')
-        .eq('id', closestDoctor.doctor_id)
-        .single();
-
-    // 6. Create emergency appointment — 30 min slot starting NOW
-    const startTime = new Date();
-    const endTime = new Date(startTime.getTime() + 30 * 60 * 1000);
-
-    const { data: appointment, error: appointmentError } = await supabaseAdmin
-        .from('appointments')
-        .insert([{
-            patient_id: patientId,
-            doctor_id: closestDoctor.doctor_id,
-            department_id: doctorDetail?.department_id || null,
-            start_time: startTime.toISOString(),
-            end_time: endTime.toISOString(),
-            reason,
-            status: 'pending',
-            severity: 'high',
-            is_emergency: true,
-        }])
-        .select(`
-            *,
-            doctor:doctors(
-                id,
-                specialization,
-                user:users(full_name),
-                department:departments(name)
-            )
-        `)
-        .single();
-
-    if (appointmentError) {
-        logger.error('Emergency appointment creation failed:', appointmentError);
-        if (appointmentError.message.includes('overlap') || appointmentError.code === '23505') {
-            throw ApiError.conflict('Nearest doctor is currently booked. Please try again.');
-        }
-        throw ApiError.internal('Failed to create emergency appointment');
-    }
-
-    logger.info(`🚨 SOS TRIGGERED: Appointment ${appointment.id} | Patient: ${patientId} → Doctor: ${closestDoctor.doctor_id} (${closestDoctor.distance_km}km away)`);
+    logger.info(`🚨 SOS TRIGGERED: Appointment ${appointment.id} | Patient: ${patientId} → Doctor: ${assignedDoctor.doctor_id} (${assignedDoctor.distance_km}km away)`);
 
     // 7. Send emergency notification email (fire and forget)
     emailService.sendBookingConfirmation(patient.email, {
         appointmentId: appointment.id,
         patientName: patient.full_name,
-        doctorName: closestDoctor.full_name,
-        specialization: closestDoctor.specialization,
-        departmentName: closestDoctor.department_name,
+        doctorName: assignedDoctor.full_name,
+        specialization: assignedDoctor.specialization,
+        departmentName: assignedDoctor.department_name,
         startTime: startTime.toISOString(),
         reason: `🚨 EMERGENCY: ${reason}`,
     }).catch(err => {
@@ -177,7 +189,7 @@ const triggerSOS = asyncHandler(async (req, res) => {
         reason,
         lat: parseFloat(lat),
         lng: parseFloat(lng),
-        doctorName: closestDoctor.full_name,
+        doctorName: assignedDoctor.full_name,
         appointmentId: appointment.id,
     }).catch(err => {
         logger.error('SMS broadcast failed', { error: err.message });
@@ -188,11 +200,11 @@ const triggerSOS = asyncHandler(async (req, res) => {
         data: {
             appointment,
             assigned_doctor: {
-                id: closestDoctor.doctor_id,
-                name: closestDoctor.full_name,
-                specialization: closestDoctor.specialization,
-                department: closestDoctor.department_name,
-                distance_km: closestDoctor.distance_km,
+                id: assignedDoctor.doctor_id,
+                name: assignedDoctor.full_name,
+                specialization: assignedDoctor.specialization,
+                department: assignedDoctor.department_name,
+                distance_km: assignedDoctor.distance_km,
             },
             all_nearby_doctors: nearestDoctors,
             sms_enabled: smsService.enabled,
