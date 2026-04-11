@@ -9,6 +9,7 @@ const { supabaseAdmin } = require('../config/supabaseAdmin');
 const { ApiError, asyncHandler } = require('../middleware/errorHandler');
 const { logger } = require('../config/logger');
 const emailService = require('../services/email/emailService');
+const smsService = require('../services/sms/smsService');
 
 /**
  * Find nearest doctors based on patient GPS coordinates
@@ -170,6 +171,18 @@ const triggerSOS = asyncHandler(async (req, res) => {
         });
     });
 
+    // 8. Broadcast SMS alerts to emergency contacts via Twilio
+    smsService.broadcastSOS({
+        patientName: patient.full_name,
+        reason,
+        lat: parseFloat(lat),
+        lng: parseFloat(lng),
+        doctorName: closestDoctor.full_name,
+        appointmentId: appointment.id,
+    }).catch(err => {
+        logger.error('SMS broadcast failed', { error: err.message });
+    });
+
     res.status(201).json({
         success: true,
         data: {
@@ -182,6 +195,7 @@ const triggerSOS = asyncHandler(async (req, res) => {
                 distance_km: closestDoctor.distance_km,
             },
             all_nearby_doctors: nearestDoctors,
+            sms_enabled: smsService.enabled,
         },
     });
 });
