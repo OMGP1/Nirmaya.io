@@ -1,4 +1,4 @@
-# HealthBook V2: Intelligent Healthcare Appointment System
+# Niramaya.io : Intelligent Healthcare Appointment System
 
 HealthBook V2 is a full-stack, AI-powered healthcare appointment management platform built with React, Supabase, and a FastAPI-based Machine Learning microservice. The system provides intelligent symptom analysis, robust appointment booking workflows, predictive health risk assessments, and dedicated portals for patients, doctors, and administrators.
 
