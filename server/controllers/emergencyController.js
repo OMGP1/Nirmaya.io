@@ -79,6 +79,62 @@ const triggerSOS = asyncHandler(async (req, res) => {
         })
         .eq('id', patientId);
 
+    // 1.5. Prevent 409 Conflict if patient triggers multiple SOS alerts within 30 mins
+    const { data: existingSOS } = await supabaseAdmin
+        .from('appointments')
+        .select(`
+            *,
+            doctor:doctors(
+                id,
+                specialization,
+                user:users(full_name),
+                department:departments(name)
+            )
+        `)
+        .eq('patient_id', patientId)
+        .eq('is_emergency', true)
+        .in('status', ['pending', 'confirmed'])
+        .gte('end_time', new Date().toISOString())
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+    if (existingSOS) {
+        logger.info(`Idempotency: Returning existing SOS appointment ${existingSOS.id} for patient ${patientId}`);
+        
+        // Broadcast SMS again just in case
+        const { data: patient } = await supabaseAdmin
+            .from('users')
+            .select('full_name, email')
+            .eq('id', patientId)
+            .single();
+
+        smsService.broadcastSOS({
+            patientName: patient?.full_name || 'Patient',
+            reason: reason,
+            lat: parseFloat(lat),
+            lng: parseFloat(lng),
+            doctorName: existingSOS.doctor?.user?.full_name || 'Assigned',
+            appointmentId: existingSOS.id,
+        }).catch(err => logger.error('SMS broadcast retry failed', { error: err.message }));
+
+        return res.status(200).json({
+            success: true,
+            data: {
+                appointment: existingSOS,
+                assigned_doctor: {
+                    id: existingSOS.doctor.id,
+                    name: existingSOS.doctor?.user?.full_name,
+                    specialization: existingSOS.doctor?.specialization,
+                    department: existingSOS.doctor?.department?.name,
+                    distance_km: 'N/A'
+                },
+                all_nearby_doctors: [],
+                sms_enabled: smsService.enabled,
+            },
+        });
+    }
+
     // 2. Find nearest available doctor
     const { data: nearestDoctors, error: searchError } = await supabaseAdmin.rpc('find_nearest_doctors', {
         lat: parseFloat(lat),
