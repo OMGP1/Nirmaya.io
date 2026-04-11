@@ -31,7 +31,6 @@ const RegisterForm = () => {
     const [success, setSuccess] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-    const [selectedRole, setSelectedRole] = useState('patient');
 
     const { signUp, signInWithGoogle } = useAuth();
     const navigate = useNavigate();
@@ -155,43 +154,15 @@ const RegisterForm = () => {
                     </p>
                 </div>
 
-                {/* Role Switcher */}
-                <div className="flex bg-white/5 rounded-2xl p-1.5 border border-white/10 animate-slide-up">
-                    <button
-                        type="button"
-                        onClick={() => setSelectedRole('patient')}
-                        className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${
-                            selectedRole === 'patient'
-                                ? 'bg-[#008080] text-white shadow-lg shadow-[#008080]/20'
-                                : 'text-white/50 hover:text-white/80'
-                        }`}
-                    >
-                        Patient
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setSelectedRole('specialist')}
-                        className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${
-                            selectedRole === 'specialist'
-                                ? 'bg-[#008080] text-white shadow-lg shadow-[#008080]/20'
-                                : 'text-white/50 hover:text-white/80'
-                        }`}
-                    >
-                        Medical Specialist
-                    </button>
-                </div>
-
                 {/* Register Card */}
                 <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-8 space-y-6 backdrop-blur-sm animate-slide-up" style={{ animationDelay: '200ms' }}>
                     <div className="space-y-1">
                         <h2 className="text-xl font-heading font-bold text-white flex items-center gap-2">
                             <UserPlus className="w-5 h-5 text-[#008080]" />
-                            {selectedRole === 'patient' ? 'Patient Registration' : 'Specialist Onboarding'}
+                            Create Profile
                         </h2>
                         <p className="text-sm text-white/40">
-                            {selectedRole === 'patient'
-                                ? 'Set up your health monitoring profile'
-                                : 'Apply for clinical portal access'}
+                            Set up your clinical intelligence profile
                         </p>
                     </div>
 
@@ -262,73 +233,7 @@ const RegisterForm = () => {
                             />
                         </div>
 
-                        {/* Specialist-specific fields */}
-                        {selectedRole === 'specialist' && (
-                            <div className="space-y-5 p-4 bg-white/[0.02] border border-white/5 rounded-xl">
-                                <p className="text-[10px] font-bold text-[#008080] uppercase tracking-widest">Specialist Credentials</p>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-white/50 uppercase tracking-wider">Domain</label>
-                                        <select className={inputClasses + ' appearance-none cursor-pointer'}>
-                                            <option value="">Select...</option>
-                                            <option value="cardiology">Cardiology</option>
-                                            <option value="pulmonology">Pulmonology</option>
-                                            <option value="neurology">Neurology</option>
-                                            <option value="orthopedics">Orthopedics</option>
-                                            <option value="general">General Medicine</option>
-                                        </select>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-white/50 uppercase tracking-wider">Registration #</label>
-                                        <input
-                                            type="text"
-                                            placeholder="MCI-XXXXX"
-                                            className={inputClasses}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-white/50 uppercase tracking-wider">Hospital Affiliation</label>
-                                    <input
-                                        type="text"
-                                        placeholder="e.g. Apollo Hospitals, Mumbai"
-                                        className={inputClasses}
-                                    />
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Patient-specific fields */}
-                        {selectedRole === 'patient' && (
-                            <div className="space-y-5 p-4 bg-white/[0.02] border border-white/5 rounded-xl">
-                                <p className="text-[10px] font-bold text-[#008080] uppercase tracking-widest">Care-Circle & SOS Setup</p>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-white/50 uppercase tracking-wider">Emergency Contact</label>
-                                        <input
-                                            type="text"
-                                            placeholder="Name"
-                                            className={inputClasses}
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-white/50 uppercase tracking-wider">Contact Phone</label>
-                                        <input
-                                            type="tel"
-                                            placeholder="+91 98765 43210"
-                                            className={inputClasses}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
-                                    <span className="text-xs text-white/60">Enable auto-alert for Care Circle</span>
-                                    <div className="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" className="sr-only peer" defaultChecked />
-                                        <div className="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#008080]" />
-                                    </div>
-                                </div>
-                            </div>
-                        )}
+                        {/* RBAC handles roles implicitly -> removed pseudo UI layout */}
 
                         {/* Password */}
                         <div className="grid grid-cols-2 gap-4">

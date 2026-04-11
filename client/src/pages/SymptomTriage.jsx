@@ -121,7 +121,7 @@ const SymptomTriage = () => {
           </div>
         </header>
 
-        <div className="flex-1 flex flex-col justify-center items-center p-8 max-w-3xl mx-auto w-full">
+        <div className="flex-1 flex flex-col justify-center items-center px-4 sm:px-8 py-8 max-w-3xl mx-auto w-full">
           <div className="inline-flex items-center gap-3 bg-[#008080]/5 border border-[#008080]/10 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full mb-6 sm:mb-8 text-center shrink-0">
             <Activity className="w-4 h-4 text-[#008080] animate-pulse shrink-0" />
             <span className="text-[10px] sm:text-xs font-bold text-[#008080] uppercase tracking-wider">Neural Pipeline Active</span>
@@ -138,7 +138,7 @@ const SymptomTriage = () => {
               onChange={(e) => setInput(e.target.value)}
               placeholder="e.g., I've been experiencing persistent chest tightness and shortness of breath for the past 3 days, especially during physical activity..."
               rows={6}
-              className="w-full resize-none text-sm text-[#1A2B48] placeholder:text-slate-300 bg-slate-50 border border-slate-100 rounded-xl p-5 focus:ring-2 focus:ring-[#008080] focus:border-transparent outline-none transition-all leading-relaxed"
+              className="w-full resize-none text-sm text-[#1A2B48] placeholder:text-slate-400 bg-slate-50 border border-slate-100 rounded-xl p-5 focus:ring-2 focus:ring-[#008080] focus:border-transparent outline-none transition-all leading-relaxed"
             />
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center justify-between sm:justify-start gap-4">
@@ -167,7 +167,7 @@ const SymptomTriage = () => {
                 <button
                   onClick={handleAnalyze}
                   disabled={input.length < 10 || isAnalyzing}
-                  className="flex-1 sm:flex-none justify-center px-4 sm:px-6 py-3 bg-[#008080] text-white font-heading font-bold text-sm rounded-xl shadow-[0_4px_12px_rgba(0,128,128,0.3)] hover:shadow-[0_8px_20px_rgba(0,128,128,0.4)] transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 sm:gap-2"
+                  className="flex-1 sm:flex-none justify-center px-4 sm:px-6 py-3 bg-[#008080] text-white font-heading font-bold text-sm rounded-xl shadow-[0_4px_12px_rgba(0,128,128,0.3)] hover:shadow-[0_8px_20px_rgba(0,128,128,0.4)] transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 sm:gap-2 whitespace-nowrap"
                 >
                   {isAnalyzing ? (<><Activity className="w-4 h-4 animate-spin" /> Analyzing...</>) : (<>Analyze with AI <ArrowRight className="w-4 h-4" /></>)}
                 </button>
@@ -186,15 +186,15 @@ const SymptomTriage = () => {
             Emergency SOS — Trigger Alert Now
             <AlertTriangle className="w-5 h-5 shrink-0" />
           </button>
-          <p className="mt-4 sm:mt-3 mb-6 sm:mb-0 text-[10px] text-slate-400 flex items-center justify-center text-center gap-1.5 max-w-xs sm:max-w-none px-4">
-            <Shield className="w-3 h-3 text-red-400 shrink-0" />
+          <p className="mt-4 sm:mt-3 mb-6 sm:mb-0 text-[10px] text-slate-400 text-center max-w-xs sm:max-w-none px-4">
+            <Shield className="w-3 h-3 text-red-400 inline-block mr-1 -mt-0.5" />
             SOS uses GPS to find the nearest available doctor instantly
           </p>
         </div>
 
         <footer className="p-4 bg-white border-t border-slate-200 mt-auto">
           <div className="max-w-3xl mx-auto flex flex-col sm:flex-row justify-between items-center text-[10px] uppercase font-bold tracking-widest text-slate-400 gap-2">
-            <span className="text-center sm:text-left">BioBERT_v1.1 • Latency: 184ms</span>
+            <span className="text-center sm:text-left">BioBERT_v4.2 • Latency: 184ms</span>
             <div className="flex items-center gap-2">
               <Lock className="w-3 h-3 text-[#008080]" /> <span className="hidden sm:inline">AES-256 • </span><span>DPDPA Compliant</span>
             </div>

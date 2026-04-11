@@ -4,7 +4,7 @@
  * Dark-theme hero with digital health aesthetic, AI status badges,
  * feature cards, and compliance footer. Matches reference index.html.
  */
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Activity, Zap, Brain, Phone, Shield, ArrowRight, Lock, Globe } from 'lucide-react';
 
@@ -60,16 +60,22 @@ const Landing = () => {
           <span className="text-xl font-heading font-bold tracking-tight">Niramaya.io</span>
         </div>
 
-        <div className="hidden md:flex items-center gap-8">
-          <div className="flex items-center gap-2 text-xs text-white/40 uppercase tracking-widest font-bold">
+        <div className="hidden md:flex items-center gap-6 lg:gap-8">
+          <div className="flex items-center gap-6 text-sm font-bold text-white/60">
+            <Link to="/about" className="hover:text-white transition-colors">Vision</Link>
+            <Link to="/doctors" className="hover:text-white transition-colors">Specialists</Link>
+            <Link to="/departments" className="hover:text-white transition-colors">Departments</Link>
+          </div>
+          <div className="w-px h-4 bg-white/10" />
+          <div className="flex items-center gap-2 text-[10px] text-white/40 uppercase tracking-widest font-bold">
             <div className="w-1.5 h-1.5 rounded-full bg-[#008080] animate-pulse" />
-            Engineering Health Intelligence
+            System Nominal
           </div>
           <button
             onClick={() => navigate('/login')}
-            className="px-6 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-bold transition-all"
+            className="px-6 py-2.5 bg-[#008080]/10 hover:bg-[#008080]/20 text-[#00F5FF] border border-[#008080]/30 rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(0,128,128,0.15)]"
           >
-            Portal Login
+            Secure Login
           </button>
         </div>
       </nav>
@@ -114,17 +120,10 @@ const Landing = () => {
             <button
               onClick={handleGetStarted}
               disabled={loading}
-              className="group px-10 py-5 bg-[#008080] text-white font-heading font-black text-lg rounded-2xl shadow-[0_10px_30px_rgba(0,128,128,0.3)] hover:shadow-[0_15px_40px_rgba(0,128,128,0.4)] hover:-translate-y-1 active:scale-95 transition-all flex items-center justify-center gap-3"
+              className="group w-full sm:w-auto px-10 py-5 bg-[#008080] text-white font-heading font-black text-lg rounded-2xl shadow-[0_10px_30px_rgba(0,128,128,0.3)] hover:shadow-[0_15px_40px_rgba(0,128,128,0.4)] hover:-translate-y-1 active:scale-95 transition-all flex items-center justify-center gap-3"
             >
               {isAuthenticated ? 'Go to Dashboard' : 'Enter Clinical Portal'}
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </button>
-            <button
-              onClick={() => navigate('/login')}
-              className="px-10 py-5 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-heading font-bold text-lg rounded-2xl transition-all flex items-center justify-center gap-3"
-            >
-              <Shield className="w-5 h-5" />
-              Specialist Access
             </button>
           </div>
         </div>
@@ -174,7 +173,7 @@ const Landing = () => {
       {/* Compliance Footer */}
       <footer className="relative py-12 px-6 border-t border-white/5">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="flex items-center gap-8">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8">
             <div className="flex items-center gap-2">
               <Lock className="w-3.5 h-3.5 text-[#008080]" />
               <span className="text-[10px] font-black text-[#008080] uppercase tracking-widest">TLS 1.3 Active</span>

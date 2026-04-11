@@ -26,7 +26,6 @@ const LoginForm = () => {
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-    const [selectedRole, setSelectedRole] = useState('patient');
 
     const { signIn, signInWithGoogle } = useAuth();
     const navigate = useNavigate();
@@ -118,42 +117,14 @@ const LoginForm = () => {
                     </p>
                 </div>
 
-                {/* Role Switcher */}
-                <div className="flex bg-white/5 rounded-2xl p-1.5 border border-white/10 animate-slide-up">
-                    <button
-                        type="button"
-                        onClick={() => setSelectedRole('patient')}
-                        className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${
-                            selectedRole === 'patient'
-                                ? 'bg-[#008080] text-white shadow-lg shadow-[#008080]/20'
-                                : 'text-white/50 hover:text-white/80'
-                        }`}
-                    >
-                        Patient
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setSelectedRole('specialist')}
-                        className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${
-                            selectedRole === 'specialist'
-                                ? 'bg-[#008080] text-white shadow-lg shadow-[#008080]/20'
-                                : 'text-white/50 hover:text-white/80'
-                        }`}
-                    >
-                        Medical Specialist
-                    </button>
-                </div>
-
                 {/* Login Card */}
                 <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-8 space-y-6 backdrop-blur-sm animate-slide-up" style={{ animationDelay: '200ms' }}>
                     <div className="space-y-1">
                         <h2 className="text-xl font-heading font-bold text-white">
-                            {selectedRole === 'patient' ? 'Patient Access' : 'Clinical Specialist Access'}
+                            Secure Access
                         </h2>
                         <p className="text-sm text-white/40">
-                            {selectedRole === 'patient'
-                                ? 'Access your health dashboard and vitals monitoring'
-                                : 'Access the clinical command center and patient management'}
+                            Sign in to your clinical intelligence dashboard
                         </p>
                     </div>
 
