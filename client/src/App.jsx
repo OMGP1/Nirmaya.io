@@ -61,6 +61,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 
 // Global Emergency Lockdown Modal
 import CriticalBreachModal from '@/components/emergency/CriticalBreachModal';
+import FloatingSOSButton from '@/components/emergency/FloatingSOSButton';
 
 function App() {
     return (
@@ -218,6 +219,7 @@ function App() {
 
                         {/* High-Urgency System Modals */}
                         <CriticalBreachModal />
+                        <FloatingSOSButton />
                     </ToastProvider>
                 </AuthProvider>
             </BrowserRouter>
