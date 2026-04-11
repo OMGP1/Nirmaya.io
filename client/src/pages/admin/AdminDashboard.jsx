@@ -78,13 +78,13 @@ const AdminDashboard = () => {
             {/* 1. System Health Overview — Metric Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* AI Model Latency */}
-                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div className="bg-[#0B1120] p-6 rounded-xl border border-white/10 shadow-lg group hover:border-[#0D9488]/50 transition-colors">
                     <div className="flex items-center justify-between mb-4">
                         <Zap className="w-5 h-5 text-[#0D9488]" />
-                        <span className="text-[10px] font-black text-[#0D9488] bg-[#0D9488]/10 px-2 py-0.5 rounded uppercase">Real-time</span>
+                        <span className="text-[10px] font-black text-[#0D9488] bg-[#0D9488]/20 border border-[#0D9488]/30 px-2 py-0.5 rounded uppercase">Real-time</span>
                     </div>
-                    <p className="text-xs font-bold text-slate-500 uppercase mb-1">Total Appointments</p>
-                    <h2 className="text-3xl font-heading font-black text-[#0B1120]">
+                    <p className="text-xs font-bold text-slate-400 uppercase mb-1">Total Appointments</p>
+                    <h2 className="text-3xl font-heading font-black text-white group-hover:text-[#0D9488] transition-colors">
                         {stats.totalAppointments.toLocaleString()}
                     </h2>
                     <div className="mt-4 flex items-center gap-2 text-[10px] font-bold text-[#0D9488]">
@@ -94,17 +94,17 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Active IoT Streams → Active Doctors */}
-                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div className="bg-[#0B1120] p-6 rounded-xl border border-white/10 shadow-lg group hover:border-blue-500/50 transition-colors">
                     <div className="flex items-center justify-between mb-4">
-                        <Rss className="w-5 h-5 text-blue-500" />
+                        <Rss className="w-5 h-5 text-blue-400" />
                         <div className="flex gap-1">
-                            <div className="w-1 h-1 bg-blue-500 rounded-full animate-bounce" />
-                            <div className="w-1 h-1 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '75ms' }} />
-                            <div className="w-1 h-1 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                            <div className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" />
+                            <div className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '75ms' }} />
+                            <div className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                         </div>
                     </div>
-                    <p className="text-xs font-bold text-slate-500 uppercase mb-1">Active Doctors</p>
-                    <h2 className="text-3xl font-heading font-black text-[#0B1120]">
+                    <p className="text-xs font-bold text-slate-400 uppercase mb-1">Active Doctors</p>
+                    <h2 className="text-3xl font-heading font-black text-white group-hover:text-blue-400 transition-colors">
                         {stats.totalDoctors.toLocaleString()}
                     </h2>
                     <div className="mt-4 flex items-center gap-2 text-[10px] font-bold text-slate-500">
@@ -113,13 +113,13 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Total FHIR Records → Patients */}
-                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div className="bg-[#0B1120] p-6 rounded-xl border border-white/10 shadow-lg group hover:border-purple-500/50 transition-colors">
                     <div className="flex items-center justify-between mb-4">
-                        <Database className="w-5 h-5 text-purple-500" />
+                        <Database className="w-5 h-5 text-purple-400" />
                         <CheckCircle className="w-4 h-4 text-[#0D9488]" />
                     </div>
-                    <p className="text-xs font-bold text-slate-500 uppercase mb-1">Total Patient Records</p>
-                    <h2 className="text-3xl font-heading font-black text-[#0B1120]">
+                    <p className="text-xs font-bold text-slate-400 uppercase mb-1">Total Patient Records</p>
+                    <h2 className="text-3xl font-heading font-black text-white group-hover:text-purple-400 transition-colors">
                         {stats.totalPatients.toLocaleString()}
                     </h2>
                     <div className="mt-4 flex items-center gap-2 text-[10px] font-bold text-slate-500">
@@ -128,16 +128,16 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* SMS Gateway → Today */}
-                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div className="bg-[#0B1120] p-6 rounded-xl border border-white/10 shadow-lg group hover:border-orange-500/50 transition-colors">
                     <div className="flex items-center justify-between mb-4">
-                        <MessageSquare className="w-5 h-5 text-orange-500" />
-                        <div className="flex items-center gap-1 px-2 py-0.5 bg-[#0D9488]/10 text-[#0D9488] rounded">
+                        <MessageSquare className="w-5 h-5 text-orange-400" />
+                        <div className="flex items-center gap-1 px-2 py-0.5 bg-[#0D9488]/20 border border-[#0D9488]/30 text-[#0D9488] rounded">
                             <div className="w-1.5 h-1.5 rounded-full bg-[#0D9488]" />
                             <span className="text-[9px] font-black uppercase">Active</span>
                         </div>
                     </div>
-                    <p className="text-xs font-bold text-slate-500 uppercase mb-1">Today's Schedule</p>
-                    <h2 className="text-3xl font-heading font-black text-[#0B1120]">
+                    <p className="text-xs font-bold text-slate-400 uppercase mb-1">Today's Schedule</p>
+                    <h2 className="text-3xl font-heading font-black text-white group-hover:text-orange-400 transition-colors">
                         {stats.todayAppointments}
                     </h2>
                     <div className="mt-4 flex items-center gap-2 text-[10px] font-bold text-slate-500">
@@ -252,7 +252,7 @@ const AdminDashboard = () => {
                                     <div className="absolute top-0 left-0 h-full w-3/4 bg-[#0D9488] rounded-full" />
                                 </div>
                                 <p className="text-[10px] text-white/40 leading-relaxed italic">
-                                    "Trigger Twilio SOS & SMS Emergency alerts when Risk Vector (NEWS2) exceeds this value."
+                                    "Trigger Emergency alerts when Risk Vector (NEWS2) exceeds this value."
                                 </p>
                             </div>
                             <div className="flex items-center justify-between pt-4 border-t border-white/10">
@@ -266,33 +266,8 @@ const AdminDashboard = () => {
                 </div>
             </div>
 
-            {/* 3. Gateway Settings — Twilio Config + DPDPA Compliance */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Twilio Config */}
-                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-                    <div className="flex items-center gap-3 mb-6">
-                        <PhoneForwarded className="w-5 h-5 text-orange-600" />
-                        <h3 className="text-sm font-black text-[#0B1120] uppercase tracking-widest">Twilio API Gateway Configuration</h3>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-black text-slate-500 uppercase">Account SID</label>
-                            <input type="text" defaultValue="AC0293x812...93" className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-xs font-mono text-[#0B1120] focus:outline-none focus:ring-2 focus:ring-[#0D9488]" readOnly />
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-black text-slate-500 uppercase">Auth Token</label>
-                            <input type="password" defaultValue="••••••••••••••••" className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-xs font-mono text-[#0B1120] focus:outline-none focus:ring-2 focus:ring-[#0D9488]" readOnly />
-                        </div>
-                        <div className="md:col-span-2 space-y-2">
-                            <label className="text-[10px] font-black text-slate-500 uppercase">Master Emergency Number (E.164)</label>
-                            <input type="text" defaultValue="+91 98765 43210" className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-xs font-mono text-[#0B1120] focus:outline-none focus:ring-2 focus:ring-[#0D9488]" />
-                        </div>
-                    </div>
-                    <div className="mt-6 flex justify-end">
-                        <button className="px-6 py-2 bg-[#0B1120] text-white text-[10px] font-black rounded-lg uppercase tracking-widest hover:brightness-110 transition-all">Update Gateway</button>
-                    </div>
-                </div>
-
+            {/* 3. Compliance Audit */}
+            <div className="grid grid-cols-1 gap-8">
                 {/* DPDPA Compliance Audit */}
                 <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 overflow-hidden">
                     <div className="flex items-center justify-between mb-6">
