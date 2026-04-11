@@ -252,6 +252,43 @@ const AppointmentDetail = () => {
         }
     };
 
+    const handleDownloadFHIR = () => {
+        if (!appointment) return;
+
+        const fhirContent = `
+HL7 FHIR v4.0.1 Data Export
+======================================
+Patient ID: ${appointment.users?.id || 'Unknown'}
+Patient Name: ${appointment.users?.full_name || 'N/A'}
+Contact Email: ${appointment.users?.email || 'N/A'}
+
+Encounter ID: ${appointment.id}
+Consultation Date: ${new Date(appointment.start_time).toLocaleString()}
+Department: ${appointment.department || 'N/A'}
+Status: ${appointment.status}
+
+Clinical Reason for Visit:
+${appointment.reason || 'N/A'}
+
+Provider Notes:
+${notes || 'No clinical notes recorded.'}
+
+======================================
+Generated on: ${new Date().toISOString()}
+Niramaya Interoperability Gateway
+`.trim();
+
+        const blob = new Blob([fhirContent], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `FHIR_Encounter_${appointment.users?.full_name?.replace(/\s+/g, '_') || 'Patient'}_${new Date().toISOString().split('T')[0]}.txt`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    };
+
     if (loading) {
         return (
             <div className="flex justify-center py-12">
@@ -382,7 +419,10 @@ const AppointmentDetail = () => {
                             {/* Interoperability */}
                             <div className="pt-2 border-t border-slate-100">
                                 <p className="text-[10px] font-black text-[#1F2937]/40 uppercase tracking-widest mb-3">Interoperability</p>
-                                <button className="w-full flex items-center justify-between px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-[#1F2937] hover:bg-slate-50 transition-all">
+                                <button 
+                                    onClick={handleDownloadFHIR}
+                                    className="w-full flex items-center justify-between px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-[#1F2937] hover:bg-slate-50 transition-all cursor-pointer hover:border-[#0D9488]/30"
+                                >
                                     <div className="flex items-center gap-2">
                                         <Download className="w-4 h-4 text-[#0D9488]" />
                                         Download FHIR ID
