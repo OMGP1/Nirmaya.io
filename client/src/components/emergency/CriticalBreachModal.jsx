@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { AlertCircle, Phone } from 'lucide-react';
 import NiramayaEngine from '@/utils/NiramayaEngine';
+import { useAuthContext } from '@/contexts/AuthContext';
 
 /**
  * CriticalBreachModal — Fullscreen Lockdown UI
@@ -13,6 +14,7 @@ const CriticalBreachModal = () => {
     const [riskScore, setRiskScore] = useState(0);
     const [dismissed, setDismissed] = useState(false);
     const [timer, setTimer] = useState(60);
+    const { isPatient } = useAuthContext();
 
     // Reset timer when modal opens
     useEffect(() => {
@@ -53,7 +55,7 @@ const CriticalBreachModal = () => {
         return cleanup;
     }, [dismissed]);
 
-    if (!isVisible) return null;
+    if (!isVisible || !isPatient) return null;
 
     const handleDismiss = () => {
         setDismissed(true);
