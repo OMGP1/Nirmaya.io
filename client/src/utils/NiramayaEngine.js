@@ -59,12 +59,12 @@ function generateMockVitals() {
   // 3. High Risk - Omprakash (Critical / SOS)
   if (name.includes('omprakash')) {
     return {
-      hr: Math.floor(120 + Math.random() * 20), // 120-140 (Tachycardia)
-      spo2: Math.floor(85 + Math.random() * 5), // 85-90 (Hypoxia)
-      rr: Math.floor(25 + Math.random() * 5), // 25-30
-      temp: (39.0 + Math.random() * 1.0).toFixed(1), // 39.0 - 40.0 (Fever)
-      systolic: Math.floor(180 + Math.random() * 30), // 180-210 (Hypertension)
-      diastolic: Math.floor(110 + Math.random() * 10), // 110-120
+      hr: Math.floor(135 + Math.random() * 10), // >130 (3 pts)
+      spo2: Math.floor(85 + Math.random() * 5), // <91 (3 pts)
+      rr: Math.floor(26 + Math.random() * 4), // >25 (3 pts)
+      temp: (39.5 + Math.random() * 0.5).toFixed(1), // >39.1 (3 pts)
+      systolic: Math.floor(80 + Math.random() * 10), // <=90 (3 pts)
+      diastolic: Math.floor(50 + Math.random() * 10), 
       timestamp: new Date().toISOString(),
     };
   }
