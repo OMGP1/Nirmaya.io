@@ -228,6 +228,7 @@ function getTriageTier(severity) {
 function broadcastVitals(vitals, riskScore) {
   localStorage.setItem(NIRAMAYA_CONFIG.keys.vitals, JSON.stringify(vitals));
   localStorage.setItem(NIRAMAYA_CONFIG.keys.risk, String(riskScore));
+  window.dispatchEvent(new Event('niramaya_update'));
 }
 
 function getStoredVitals() {
@@ -290,16 +291,21 @@ function logout() {
 function createStorageListener(callback) {
   const handler = (e) => {
     if (
+      !e.key || 
       e.key === NIRAMAYA_CONFIG.keys.vitals ||
       e.key === NIRAMAYA_CONFIG.keys.risk
     ) {
       const vitals = getStoredVitals();
       const risk = getStoredRiskScore();
-      if (vitals) callback(vitals, risk);
+      if (vitals && risk !== null) callback(vitals, risk);
     }
   };
   window.addEventListener('storage', handler);
-  return () => window.removeEventListener('storage', handler);
+  window.addEventListener('niramaya_update', handler);
+  return () => {
+    window.removeEventListener('storage', handler);
+    window.removeEventListener('niramaya_update', handler);
+  };
 }
 
 /* ===== Export ===== */
