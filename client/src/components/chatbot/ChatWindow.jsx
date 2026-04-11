@@ -57,7 +57,7 @@ const TimeSlotButton = ({ slot, onSelect }) => (
 // Get initial welcome message
 const getWelcomeMessage = (userName) => ({
     id: 1,
-    text: `Hi${userName ? ` ${userName}` : ''}! 👋 I'm your HealthBook AI assistant. I can help you book appointments based on your symptoms. Just describe how you're feeling, and I'll suggest the right department and doctor for you!`,
+    text: `Hi${userName ? ` ${userName}` : ''}! 👋 I'm your Niramaya AI assistant. I can help you book appointments based on your symptoms. Just describe how you're feeling, and I'll suggest the right department and doctor for you!`,
     isBot: true,
     timestamp: new Date().toISOString()
 });
@@ -391,7 +391,7 @@ const ChatWindow = ({ isOpen, onClose }) => {
                             <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-clinical-stable rounded-full border-2 border-niramaya-navy"></div>
                         </div>
                         <div>
-                            <h3 className="font-bold text-lg text-white">HealthBook AI</h3>
+                            <h3 className="font-bold text-lg text-white">Niramaya AI</h3>
                             <p className="text-sm text-slate-300 flex items-center gap-1.5">
                                 <span className="w-2 h-2 bg-clinical-stable rounded-full animate-pulse-teal"></span>
                                 Clinical triage

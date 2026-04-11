@@ -19,7 +19,7 @@ const About = () => {
                 {/* Hero */}
                 <div className="text-center mb-16">
                     <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                        About HealthBook
+                        About Niramaya
                     </h1>
                     <p className="text-xl text-gray-600 max-w-2xl mx-auto">
                         We're on a mission to make healthcare accessible, convenient,
@@ -42,7 +42,7 @@ const About = () => {
                 <div className="prose prose-lg max-w-none">
                     <h2>Our Story</h2>
                     <p>
-                        HealthBook was founded with a simple idea: booking a doctor's appointment
+                        Niramaya was founded with a simple idea: booking a doctor's appointment
                         should be as easy as booking a restaurant table. We saw patients struggling
                         with endless phone calls, long wait times, and confusing scheduling systems.
                     </p>
@@ -65,7 +65,7 @@ const About = () => {
                         Have questions or feedback? We'd love to hear from you.
                     </p>
                     <p>
-                        Email: <a href="mailto:support@healthbook.com">support@healthbook.com</a><br />
+                        Email: <a href="mailto:support@niramaya.io">support@niramaya.io</a><br />
                         Phone: +91 1800-HEALTH
                     </p>
                 </div>

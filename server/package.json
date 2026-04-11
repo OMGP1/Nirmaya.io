@@ -1,7 +1,7 @@
 {
-    "name": "healthbook-api",
+    "name": "niramaya-api",
     "version": "1.0.0",
-    "description": "HealthBook Backend API",
+    "description": "Niramaya Backend API",
     "main": "server.js",
     "scripts": {
         "start": "node server.js",

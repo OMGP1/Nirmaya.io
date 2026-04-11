@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: healthbook-api
+    name: niramaya-api
     runtime: node
     buildCommand: npm install
     startCommand: npm start

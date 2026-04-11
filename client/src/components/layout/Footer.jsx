@@ -33,7 +33,7 @@ const Footer = () => {
                     <div className="col-span-2 md:col-span-1">
                         <Link to="/" className="flex items-center gap-2 mb-4">
                             <span className="text-2xl">🏥</span>
-                            <span className="text-xl font-bold text-white">HealthBook</span>
+                            <span className="text-xl font-bold text-white">Niramaya</span>
                         </Link>
                         <p className="text-sm text-gray-400 max-w-xs">
                             Modern healthcare appointment scheduling made simple.
@@ -94,7 +94,7 @@ const Footer = () => {
 
                 {/* Copyright */}
                 <div className="mt-12 pt-8 border-t border-gray-800 text-center text-sm text-gray-500">
-                    © {currentYear} HealthBook. All rights reserved.
+                    © {currentYear} Niramaya. All rights reserved.
                 </div>
             </div>
         </footer>

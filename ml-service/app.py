@@ -19,7 +19,7 @@ from groq import Groq
 # App setup
 # ---------------------------------------------------------------------------
 app = FastAPI(
-    title="HealthBook ML Risk Prediction",
+    title="Niramaya ML Risk Prediction",
     version="1.0.0",
 )
 
@@ -216,7 +216,7 @@ def predict_risk(data: HealthInput):
 def health_check():
     return {
         "status": "healthy",
-        "service": "HealthBook ML Risk Prediction",
+        "service": "Niramaya ML Risk Prediction",
         "model_loaded": model is not None,
     }
 

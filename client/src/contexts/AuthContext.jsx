@@ -22,7 +22,7 @@ export const useAuthContext = () => {
 // Helper to get cached profile from localStorage
 const getCachedProfile = () => {
     try {
-        const cached = localStorage.getItem('healthbook_profile');
+        const cached = localStorage.getItem('niramaya_profile');
         return cached ? JSON.parse(cached) : null;
     } catch {
         return null;
@@ -33,9 +33,9 @@ const getCachedProfile = () => {
 const cacheProfile = (profile) => {
     try {
         if (profile) {
-            localStorage.setItem('healthbook_profile', JSON.stringify(profile));
+            localStorage.setItem('niramaya_profile', JSON.stringify(profile));
         } else {
-            localStorage.removeItem('healthbook_profile');
+            localStorage.removeItem('niramaya_profile');
         }
     } catch {
         // Ignore localStorage errors

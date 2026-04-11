@@ -4,8 +4,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-const FROM_EMAIL = Deno.env.get("EMAIL_FROM") || "noreply@healthbook.app";
-const FROM_NAME = Deno.env.get("EMAIL_FROM_NAME") || "HealthBook";
+const FROM_EMAIL = Deno.env.get("EMAIL_FROM") || "noreply@niramaya.io";
+const FROM_NAME = Deno.env.get("EMAIL_FROM_NAME") || "Niramaya";
 
 const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
@@ -109,7 +109,7 @@ function generatePatientEmailHtml(data: BookingEmailRequest): string {
     </div>
     
     <div style="text-align: center; padding: 20px; color: #9CA3AF; font-size: 12px;">
-      <p>© ${new Date().getFullYear()} HealthBook. All rights reserved.</p>
+      <p>© ${new Date().getFullYear()} Niramaya. All rights reserved.</p>
     </div>
   </div>
 </body>
@@ -171,7 +171,7 @@ function generateDoctorEmailHtml(data: BookingEmailRequest): string {
     </div>
     
     <div style="text-align: center; padding: 20px; color: #9CA3AF; font-size: 12px;">
-      <p>© ${new Date().getFullYear()} HealthBook. All rights reserved.</p>
+      <p>© ${new Date().getFullYear()} Niramaya. All rights reserved.</p>
     </div>
   </div>
 </body>

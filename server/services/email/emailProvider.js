@@ -44,7 +44,7 @@ function getResendClient() {
 function getSender() {
     // Resend requires verified domain or use their testing domain
     const email = process.env.EMAIL_FROM || 'onboarding@resend.dev';
-    const name = process.env.EMAIL_FROM_NAME || 'HealthBook';
+    const name = process.env.EMAIL_FROM_NAME || 'Niramaya';
     return {
         name,
         email,

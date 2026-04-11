@@ -34,7 +34,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     persistSession: true,
     detectSessionInUrl: true,
     storage: typeof window !== 'undefined' ? window.localStorage : undefined,
-    storageKey: 'healthbook-auth',
+    storageKey: 'niramaya-auth',
     flowType: 'implicit', // Changed from pkce to implicit for simpler flow
     // Custom lock to prevent AbortError
     lock: customLock,
@@ -43,7 +43,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   },
   global: {
     headers: {
-      'X-Client-Info': 'healthbook-client',
+      'X-Client-Info': 'niramaya-client',
     },
   },
   db: {

@@ -103,7 +103,7 @@ function generatePatientEmailHtml(data) {
     </div>
     
     <div style="text-align: center; padding: 20px; color: #9CA3AF; font-size: 12px;">
-      <p>© ${new Date().getFullYear()} HealthBook. All rights reserved.</p>
+      <p>© ${new Date().getFullYear()} Niramaya. All rights reserved.</p>
     </div>
   </div>
 </body>
@@ -168,7 +168,7 @@ function generateDoctorEmailHtml(data) {
     </div>
     
     <div style="text-align: center; padding: 20px; color: #9CA3AF; font-size: 12px;">
-      <p>© ${new Date().getFullYear()} HealthBook. All rights reserved.</p>
+      <p>© ${new Date().getFullYear()} Niramaya. All rights reserved.</p>
     </div>
   </div>
 </body>
@@ -188,7 +188,7 @@ async function sendViaResend(to, subject, html) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                from: `HealthBook <${FROM_EMAIL}>`,
+                from: `Niramaya <${FROM_EMAIL}>`,
                 to: [to],
                 subject: subject,
                 html: html,

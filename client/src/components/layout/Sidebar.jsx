@@ -75,7 +75,7 @@ const Sidebar = ({ className }) => {
                 <div>
                     <h1 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
                         <Heart className="w-5 h-5 text-pink-400" />
-                        HealthBook
+                        Niramaya
                     </h1>
                     <p className="text-xs text-primary-200 mt-1">Patient Portal</p>
                 </div>
@@ -149,7 +149,7 @@ const Sidebar = ({ className }) => {
                 </button>
                 <h1 className="text-lg font-bold text-white flex items-center gap-2">
                     <Heart className="w-5 h-5 text-pink-300" />
-                    HealthBook
+                    Niramaya
                 </h1>
                 <div className="w-10" /> {/* Spacer for centering */}
             </div>

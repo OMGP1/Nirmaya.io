@@ -24,7 +24,7 @@ const NIRAMAYA_CONFIG = {
 function generateMockVitals() {
   let profile = null;
   try {
-    const cached = localStorage.getItem('healthbook_profile');
+    const cached = localStorage.getItem('niramaya_profile');
     if (cached) profile = JSON.parse(cached);
   } catch (e) {}
 

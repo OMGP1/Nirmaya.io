@@ -1,5 +1,5 @@
 /**
- * HealthBook API Server
+ * Niramaya API Server
  * 
  * Express.js backend with Supabase integration.
  */
@@ -114,7 +114,7 @@ app.use(errorHandler);
 
 // Start server
 app.listen(PORT, () => {
-    logger.info(`🚀 HealthBook API running on port ${PORT}`);
+    logger.info(`🚀 Niramaya API running on port ${PORT}`);
     logger.info(`📍 Health check: http://localhost:${PORT}/health`);
 });
 

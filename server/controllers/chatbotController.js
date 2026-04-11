@@ -229,7 +229,7 @@ Be concise and direct. Don't ask follow-up questions - just recommend and offer 
                 .eq('is_active', true);
             const deptList = departments?.map(d => d.name).join(', ') || 'various departments';
 
-            const prompt = `You are HealthBook's helpful medical appointment assistant.
+            const prompt = `You are Niramaya's helpful medical appointment assistant.
 Available departments: ${deptList}
 
 User says: "${message}"

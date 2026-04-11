@@ -1,6 +1,6 @@
 {
-    "name": "HealthBook - Healthcare Appointment System",
-    "short_name": "HealthBook",
+    "name": "Niramaya - Healthcare Appointment System",
+    "short_name": "Niramaya",
     "description": "Book medical appointments, find doctors, and manage your healthcare",
     "start_url": "/",
     "display": "standalone",

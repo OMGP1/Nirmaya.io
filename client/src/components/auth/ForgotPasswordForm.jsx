@@ -66,7 +66,7 @@ const ForgotPasswordForm = () => {
             <div className="max-w-md w-full">
                 {/* Logo/Header */}
                 <div className="text-center mb-8">
-                    <h1 className="text-4xl font-bold text-indigo-600 mb-2">🏥 HealthBook</h1>
+                    <h1 className="text-4xl font-bold text-indigo-600 mb-2">🏥 Niramaya</h1>
                     <h2 className="text-2xl font-semibold text-gray-800">Reset Password</h2>
                     <p className="text-gray-600 mt-2">Enter your email to receive a reset link</p>
                 </div>
