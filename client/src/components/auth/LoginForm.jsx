@@ -56,7 +56,14 @@ const LoginForm = () => {
 
                 const role = profile?.role || 'patient';
 
-                if (from) {
+                // Only honor the saved redirect if it matches the user's role portal
+                const isFromValid = from && (
+                    (role === 'admin' && from.startsWith('/admin')) ||
+                    (role === 'doctor' && from.startsWith('/doctor')) ||
+                    (role === 'patient' && !from.startsWith('/admin') && !from.startsWith('/doctor'))
+                );
+
+                if (isFromValid) {
                     navigate(from, { replace: true });
                 } else if (role === 'admin') {
                     navigate('/admin', { replace: true });
