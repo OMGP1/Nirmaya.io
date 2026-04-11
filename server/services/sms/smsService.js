@@ -62,16 +62,11 @@ class TwilioSMSService {
         const mapsLink = `https://maps.google.com/?q=${lat},${lng}`;
 
         const message = [
-            `🚨 SOS ALERT — Niramaya Emergency`,
-            ``,
-            `Patient: ${patientName}`,
-            `Reason: ${reason}`,
-            doctorName ? `Assigned Doctor: Dr. ${doctorName}` : '',
-            ``,
-            `📍 Location: ${mapsLink}`,
-            ``,
-            `This is an automated alert from Niramaya.io`,
-        ].filter(Boolean).join('\n');
+            `SOS! ${patientName}`,
+            `${reason}`,
+            doctorName ? `Dr: ${doctorName}` : '',
+            `Loc: ${mapsLink}`
+        ].filter(Boolean).join(' - ');
 
         const results = [];
         let sent = 0;

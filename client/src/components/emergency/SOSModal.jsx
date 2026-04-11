@@ -44,15 +44,22 @@ const SOSModal = ({ isOpen, onClose }) => {
         setError(null);
 
         try {
-            const loc = await getPatientLocation(5000);
+            const loc = await getPatientLocation(500);
             setLocation(loc);
 
-            // Phase 2: Find nearest doctors
-            const result = await findNearestDoctors(loc.lat, loc.lng);
-            setDoctors(result.doctors || []);
-            setPhase(SOS_PHASES.DOCTORS);
+            // Auto-trigger the dispatch immediately for maximum speed
+            setPhase(SOS_PHASES.CONFIRMING);
+            const bookingResult = await triggerSOSBooking(
+                loc.lat,
+                loc.lng,
+                'Emergency SOS Alert — Immediate assistance required'
+            );
+            
+            setAppointment(bookingResult.appointment);
+            setSelectedDoctor(bookingResult.assigned_doctor);
+            setPhase(SOS_PHASES.SUCCESS);
         } catch (err) {
-            setError(err.message || 'Failed to locate nearby doctors');
+            setError(err.message || 'Failed to dispatch SOS alert');
             setPhase(SOS_PHASES.ERROR);
         }
     }, []);
