@@ -22,6 +22,54 @@ const NIRAMAYA_CONFIG = {
 
 /* ===== Telemetry Generation ===== */
 function generateMockVitals() {
+  let profile = null;
+  try {
+    const cached = localStorage.getItem('healthbook_profile');
+    if (cached) profile = JSON.parse(cached);
+  } catch (e) {}
+
+  const name = (profile?.full_name || '').toLowerCase();
+
+  // 1. Low Risk - Om Parab (Stable)
+  if (name.includes('om parab')) {
+    return {
+      hr: Math.floor(60 + Math.random() * 20), // 60-80
+      spo2: Math.floor(96 + Math.random() * 4), // 96-100
+      rr: Math.floor(12 + Math.random() * 4), // 12-16
+      temp: (36.5 + Math.random() * 0.7).toFixed(1), // 36.5 - 37.2
+      systolic: Math.floor(110 + Math.random() * 10), // 110-120
+      diastolic: Math.floor(70 + Math.random() * 10), // 70-80
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  // 2. Moderate Risk - Havish Kanojia (Anomaly)
+  if (name.includes('havish kanojia')) {
+    return {
+      hr: Math.floor(95 + Math.random() * 15), // 95-110
+      spo2: Math.floor(93 + Math.random() * 2), // 93-95
+      rr: Math.floor(20 + Math.random() * 2), // 20-22
+      temp: (37.8 + Math.random() * 0.5).toFixed(1), // 37.8 - 38.3
+      systolic: Math.floor(135 + Math.random() * 10), // 135-145
+      diastolic: Math.floor(85 + Math.random() * 10), // 85-95
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  // 3. High Risk - Omprakash (Critical / SOS)
+  if (name.includes('omprakash')) {
+    return {
+      hr: Math.floor(120 + Math.random() * 20), // 120-140 (Tachycardia)
+      spo2: Math.floor(85 + Math.random() * 5), // 85-90 (Hypoxia)
+      rr: Math.floor(25 + Math.random() * 5), // 25-30
+      temp: (39.0 + Math.random() * 1.0).toFixed(1), // 39.0 - 40.0 (Fever)
+      systolic: Math.floor(180 + Math.random() * 30), // 180-210 (Hypertension)
+      diastolic: Math.floor(110 + Math.random() * 10), // 110-120
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  // 4. Default Mock (Randomized)
   return {
     hr: Math.floor(60 + Math.random() * 50),
     spo2: Math.floor(88 + Math.random() * 12),
