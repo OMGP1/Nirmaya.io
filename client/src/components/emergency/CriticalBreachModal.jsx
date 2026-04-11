@@ -12,6 +12,25 @@ const CriticalBreachModal = () => {
     const [isVisible, setIsVisible] = useState(false);
     const [riskScore, setRiskScore] = useState(0);
     const [dismissed, setDismissed] = useState(false);
+    const [timer, setTimer] = useState(60);
+
+    // Reset timer when modal opens
+    useEffect(() => {
+        if (isVisible) setTimer(60);
+    }, [isVisible]);
+
+    useEffect(() => {
+        let interval;
+        if (isVisible && timer > 0) {
+            interval = setInterval(() => {
+                setTimer((prev) => prev - 1);
+            }, 1000);
+        } else if (isVisible && timer === 0) {
+            window.location.href = 'tel:112';
+            setTimer(-1); // Stop looping
+        }
+        return () => clearInterval(interval);
+    }, [isVisible, timer]);
 
     useEffect(() => {
         // Listen to cross-tab storage events from the telemetry engine
@@ -112,7 +131,7 @@ const CriticalBreachModal = () => {
                         <div className="absolute inset-0 bg-gradient-to-r from-teal-400/0 via-teal-400/30 to-teal-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out" />
                         <div className="relative flex items-center justify-center gap-3 font-black text-sm tracking-widest uppercase">
                             <Phone className="w-5 h-5" />
-                            Contact Specialist Now
+                            {timer > 0 ? `Contact Specialist Now (${timer}s)` : 'Contacting Specialist...'}
                         </div>
                     </button>
 
