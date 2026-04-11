@@ -18,7 +18,7 @@ DECLARE
     v_resend_key TEXT;
 BEGIN
     -- Resend API key
-    v_resend_key := 're_hMLy3kru_E9jjB8Ty5K76Nd53NN9xp8K9';
+    v_resend_key := 're_Secgsho7_FYojaTqkAe3QeWD1sjrRmJ8J';
     
     -- Create email record
     INSERT INTO public.email_queue (to_email, subject, html_content, appointment_id, status)

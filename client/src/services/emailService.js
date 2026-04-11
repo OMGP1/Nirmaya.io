@@ -6,7 +6,7 @@
  */
 
 // Resend API configuration
-const RESEND_API_KEY = 're_hMLy3kru_E9jjB8Ty5K76Nd53NN9xp8K9';
+const RESEND_API_KEY = 're_Secgsho7_FYojaTqkAe3QeWD1sjrRmJ8J';
 const FROM_EMAIL = 'onboarding@resend.dev'; // Use Resend test domain
 
 /**
