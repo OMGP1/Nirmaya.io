@@ -44,7 +44,8 @@ const SOSModal = ({ isOpen, onClose }) => {
         setError(null);
 
         try {
-            const loc = await getPatientLocation(500);
+            // Increased to 8000ms to allow exact live GPS coordinates to resolve
+            const loc = await getPatientLocation(8000);
             setLocation(loc);
 
             // Auto-trigger the dispatch immediately for maximum speed
