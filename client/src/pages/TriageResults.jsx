@@ -9,6 +9,7 @@ import { useLocation, Link, useNavigate } from 'react-router-dom';
 import PatientSidebar from '@/components/layout/PatientSidebar';
 import SOSModal from '@/components/emergency/SOSModal';
 import { getDoctors } from '@/services/doctors';
+import { getDepartments } from '@/services/departments';
 import { Spinner } from '@/components/ui';
 import { Brain, ArrowLeft, CheckCircle, User, Calendar, AlertTriangle, Radio, Shield, Star, Clock } from 'lucide-react';
 
@@ -40,7 +41,20 @@ const TriageResults = () => {
       const fetchDocs = async () => {
         setLoadingDoctors(true);
         try {
-          const docs = await getDoctors({ search: result.department });
+          const spec = specialistMap[result.department] || specialistMap.general;
+          
+          // Fetch departments to find the matching department ID
+          const depts = await getDepartments();
+          const targetDept = depts.find(d => d.name.toLowerCase() === spec.title.toLowerCase());
+          
+          let docs = [];
+          if (targetDept) {
+            docs = await getDoctors({ departmentId: targetDept.id });
+          } else {
+            // Fallback to text search if no exact department match
+            docs = await getDoctors({ search: result.department });
+          }
+          
           setRecommendedDoctors(docs.slice(0, 4)); // Get top 4 relevant
         } catch (err) {
           console.error(err);
