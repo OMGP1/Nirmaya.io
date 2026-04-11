@@ -4,11 +4,13 @@
  * Low/Moderate severity → Standard specialist booking
  * High severity → Auto-prompt SOS modal for proximity-based doctor assignment
  */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import PatientSidebar from '@/components/layout/PatientSidebar';
 import SOSModal from '@/components/emergency/SOSModal';
-import { Brain, ArrowLeft, CheckCircle, User, Calendar, AlertTriangle, Radio, Shield } from 'lucide-react';
+import { getDoctors } from '@/services/doctors';
+import { Spinner } from '@/components/ui';
+import { Brain, ArrowLeft, CheckCircle, User, Calendar, AlertTriangle, Radio, Shield, Star, Clock } from 'lucide-react';
 
 const specialistMap = {
   cardiology: { title: 'Cardiology', icon: '🫀', description: 'Heart and cardiovascular system specialists' },
@@ -30,6 +32,27 @@ const TriageResults = () => {
   const navigate = useNavigate();
   const result = location.state?.result;
   const [showSOS, setShowSOS] = useState(false);
+  const [recommendedDoctors, setRecommendedDoctors] = useState([]);
+  const [loadingDoctors, setLoadingDoctors] = useState(true);
+
+  useEffect(() => {
+    if (result?.department) {
+      const fetchDocs = async () => {
+        setLoadingDoctors(true);
+        try {
+          const docs = await getDoctors({ search: result.department });
+          setRecommendedDoctors(docs.slice(0, 4)); // Get top 4 relevant
+        } catch (err) {
+          console.error(err);
+        } finally {
+          setLoadingDoctors(false);
+        }
+      };
+      fetchDocs();
+    } else {
+      setLoadingDoctors(false);
+    }
+  }, [result?.department]);
 
   if (!result) {
     return (
@@ -162,13 +185,72 @@ const TriageResults = () => {
             <div className="text-center">
               <button
                 onClick={() => setShowSOS(true)}
-                className="text-sm text-red-500 hover:text-red-600 font-bold flex items-center gap-2 mx-auto transition-colors"
+                className="text-sm text-red-500 hover:text-red-600 font-bold flex items-center gap-2 mx-auto transition-colors mt-2"
               >
                 <AlertTriangle className="w-4 h-4" />
                 Need immediate help? Trigger Emergency SOS
               </button>
             </div>
           )}
+
+          {/* Recommended Specialists Section */}
+          <div className="pt-8 border-t border-slate-200">
+            <h3 className="text-lg font-heading font-black text-[#1A2B48] mb-6 flex items-center gap-2">
+              <User className="w-5 h-5 text-[#008080]" />
+              Recommended Specialists
+            </h3>
+            {loadingDoctors ? (
+              <div className="flex justify-center py-8">
+                <Spinner />
+              </div>
+            ) : recommendedDoctors.length === 0 ? (
+              <div className="text-center py-8 bg-slate-50 border border-slate-200 rounded-2xl text-slate-500 text-sm">
+                No specialists matching this description are available at the moment.
+              </div>
+            ) : (
+              <div className="grid md:grid-cols-2 gap-4">
+                {recommendedDoctors.map((doctor) => (
+                  <div key={doctor.id} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex flex-col hover:border-[#008080]/30 hover:shadow-md transition-all">
+                    <div className="flex items-start gap-4 mb-4">
+                      <div className="w-12 h-12 rounded-xl bg-[#008080]/10 flex items-center justify-center font-heading font-black text-lg text-[#008080] border border-[#008080]/20 shrink-0">
+                        {doctor.user?.full_name?.charAt(0) || 'D'}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                          <h3 className="font-heading font-black text-base text-[#1A2B48] truncate">
+                              Dr. {doctor.user?.full_name}
+                          </h3>
+                          <p className="text-xs font-medium text-slate-500 truncate mt-0.5">
+                              {doctor.specialization}
+                          </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-100">
+                      <div className="flex items-center gap-3">
+                         {doctor.experience_years && (
+                             <div className="flex items-center gap-1 text-xs font-bold text-slate-600">
+                                 <Clock className="w-3.5 h-3.5 text-slate-400" />
+                                 {doctor.experience_years}y
+                             </div>
+                         )}
+                         {doctor.average_rating && (
+                             <div className="flex items-center gap-1 text-xs font-bold text-amber-600">
+                                 <Star className="w-3.5 h-3.5 text-amber-500" />
+                                 {doctor.average_rating.toFixed(1)}
+                             </div>
+                         )}
+                      </div>
+                      <Link
+                          to={`/book?doctorId=${doctor.id}`}
+                          className="px-4 py-2 bg-slate-100 text-[#1A2B48] text-xs font-bold rounded-lg hover:bg-[#008080] hover:text-white transition-colors flex items-center gap-1.5"
+                      >
+                          <Calendar className="w-3.5 h-3.5" /> Book
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </main>
 
