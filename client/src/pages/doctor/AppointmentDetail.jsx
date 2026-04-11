@@ -258,13 +258,13 @@ const AppointmentDetail = () => {
         const fhirContent = `
 HL7 FHIR v4.0.1 Data Export
 ======================================
-Patient ID: ${appointment.users?.id || 'Unknown'}
-Patient Name: ${appointment.users?.full_name || 'N/A'}
-Contact Email: ${appointment.users?.email || 'N/A'}
+Patient ID: ${appointment.patient?.id || 'Unknown'}
+Patient Name: ${appointment.patient?.full_name || 'N/A'}
+Contact Email: ${appointment.patient?.email || 'N/A'}
 
 Encounter ID: ${appointment.id}
 Consultation Date: ${new Date(appointment.start_time).toLocaleString()}
-Department: ${appointment.department || 'N/A'}
+Department: ${typeof appointment.department === 'object' ? appointment.department?.name || JSON.stringify(appointment.department) : appointment.department || 'N/A'}
 Status: ${appointment.status}
 
 Clinical Reason for Visit:
@@ -282,7 +282,7 @@ Niramaya Interoperability Gateway
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.download = `FHIR_Encounter_${appointment.users?.full_name?.replace(/\s+/g, '_') || 'Patient'}_${new Date().toISOString().split('T')[0]}.txt`;
+        link.download = `FHIR_Encounter_${appointment.patient?.full_name?.replace(/\s+/g, '_') || 'Patient'}_${new Date().toISOString().split('T')[0]}.txt`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
