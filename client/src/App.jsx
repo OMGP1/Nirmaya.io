@@ -59,6 +59,9 @@ import PatientChatBubble from '@/components/chatbot/PatientChatBubble';
 // Error Boundary - fallback with logout
 import ErrorBoundary from '@/components/ErrorBoundary';
 
+// Global Emergency Lockdown Modal
+import CriticalBreachModal from '@/components/emergency/CriticalBreachModal';
+
 function App() {
     return (
         <ErrorBoundary>
@@ -212,6 +215,9 @@ function App() {
                                 },
                             }}
                         />
+
+                        {/* High-Urgency System Modals */}
+                        <CriticalBreachModal />
                     </ToastProvider>
                 </AuthProvider>
             </BrowserRouter>
