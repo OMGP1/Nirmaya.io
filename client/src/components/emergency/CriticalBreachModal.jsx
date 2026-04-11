@@ -105,7 +105,10 @@ const CriticalBreachModal = () => {
 
                 {/* Action Buttons */}
                 <div className="w-full max-w-2xl space-y-4">
-                    <button className="w-full group relative overflow-hidden bg-teal-600 hover:bg-teal-500 text-white rounded-2xl py-5 transition-all outline-none">
+                    <button 
+                        onClick={() => window.location.href = 'tel:112'}
+                        className="w-full group relative overflow-hidden bg-teal-600 hover:bg-teal-500 text-white rounded-2xl py-5 transition-all outline-none"
+                    >
                         <div className="absolute inset-0 bg-gradient-to-r from-teal-400/0 via-teal-400/30 to-teal-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out" />
                         <div className="relative flex items-center justify-center gap-3 font-black text-sm tracking-widest uppercase">
                             <Phone className="w-5 h-5" />
