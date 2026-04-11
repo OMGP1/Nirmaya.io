@@ -20,6 +20,23 @@ const SymptomTriage = () => {
   const navigate = useNavigate();
   const { analyzeSymptoms, riskScore } = useNiramaya();
 
+  const executeAnalysis = async (textToAnalyze) => {
+    if (textToAnalyze.length < 10) return;
+    setIsAnalyzing(true);
+    await new Promise((r) => setTimeout(r, 1500));
+    const result = analyzeSymptoms(textToAnalyze);
+    setIsAnalyzing(false);
+
+    // If high severity detected, auto-prompt SOS
+    if (result.severity === 'high') {
+      setShowSOS(true);
+    } else {
+      navigate('/triage-results', { state: { result } });
+    }
+  };
+
+  const handleAnalyze = () => executeAnalysis(input);
+
   const handleVoiceInput = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
@@ -31,31 +48,33 @@ const SymptomTriage = () => {
     recognition.interimResults = true;
     recognition.lang = 'en-US';
 
+    let finalTranscript = '';
+
     recognition.onstart = () => setIsRecording(true);
+    
     recognition.onresult = (event) => {
-      const transcript = Array.from(event.results)
+      const currentTranscript = Array.from(event.results)
         .map((r) => r[0].transcript)
         .join('');
-      setInput(transcript);
+      
+      setInput(currentTranscript);
+      if (event.results[0].isFinal) {
+          finalTranscript = currentTranscript;
+      }
     };
-    recognition.onend = () => setIsRecording(false);
+    
+    recognition.onend = () => {
+        setIsRecording(false);
+        if (finalTranscript.trim().length >= 10) {
+            executeAnalysis(finalTranscript);
+        } else if (input.trim().length >= 10) {
+            // fallback if isFinal wasn't properly set on the last tick
+            executeAnalysis(input);
+        }
+    };
+    
     recognition.onerror = () => setIsRecording(false);
     recognition.start();
-  };
-
-  const handleAnalyze = async () => {
-    if (input.length < 10) return;
-    setIsAnalyzing(true);
-    await new Promise((r) => setTimeout(r, 1500));
-    const result = analyzeSymptoms(input);
-    setIsAnalyzing(false);
-
-    // If high severity detected, auto-prompt SOS
-    if (result.severity === 'high') {
-      setShowSOS(true);
-    } else {
-      navigate('/triage-results', { state: { result } });
-    }
   };
 
   const handleSOSTrigger = () => {
